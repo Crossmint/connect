@@ -13,7 +13,7 @@ import { AppProps } from "next/app";
 import { FC, useMemo } from "react";
 import { Toaster } from "react-hot-toast";
 
-import { CrossmintEnvironment, CrossmintWalletAdapter } from "@crossmint/embed";
+import { CrossmintEnvironment, CrossmintSolanaWalletAdapter } from "@crossmint/embed";
 
 // Use require instead of import since order matters
 require("@solana/wallet-adapter-react-ui/styles.css");
@@ -36,7 +36,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
             new SlopeWalletAdapter(),
             new SolflareWalletAdapter({ network }),
             new TorusWalletAdapter(),
-            new CrossmintWalletAdapter({
+            new CrossmintSolanaWalletAdapter({
                 apiKey: "maxwell-test",
                 environment: CrossmintEnvironment.LOCAL,
             }),

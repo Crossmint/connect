@@ -14,7 +14,7 @@ import { CROSSMINT_LOGO_21x21, CrossmintWalletName } from "../consts/branding";
 import { BlockchainTypes, CrossmintEmbedConfig, CrossmintEmbedParams } from "../types";
 import { buildConfig } from "../utils/config";
 
-export class CrossmintWalletAdapter extends BaseMessageSignerWalletAdapter {
+export class CrossmintSolanaWalletAdapter extends BaseMessageSignerWalletAdapter {
     name = CrossmintWalletName;
     url = "https://www.crossmint.io";
     icon = CROSSMINT_LOGO_21x21;
