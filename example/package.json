@@ -1,0 +1,32 @@
+{
+    "name": "example",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint"
+    },
+    "dependencies": {
+        "@crossmint/embed": "^0.0.1-alpha.0",
+        "@solana/wallet-adapter-base": "^0.9.7",
+        "@solana/wallet-adapter-react": "^0.15.6",
+        "@solana/wallet-adapter-react-ui": "^0.9.8",
+        "@solana/wallet-adapter-wallets": "^0.16.6",
+        "@solana/web3.js": "^1.47.3",
+        "bs58": "^5.0.0",
+        "next": "12.2.2",
+        "react": "18.2.0",
+        "react-dom": "18.2.0",
+        "react-hot-toast": "^2.2.0"
+    },
+    "devDependencies": {
+        "@types/node": "18.0.3",
+        "@types/react": "18.0.15",
+        "@types/react-dom": "18.0.6",
+        "eslint": "8.19.0",
+        "eslint-config-next": "12.2.2",
+        "typescript": "4.7.4"
+    }
+}
