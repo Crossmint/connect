@@ -5,10 +5,6 @@ export default class WindowAdapter {
 
     onClose?: Function;
 
-    get isInitialized() {
-        return this.controlledWindow !== undefined && !this.controlledWindow.closed;
-    }
-
     constructor(onClose?: Function) {
         this.open = false;
         this.onClose = onClose;

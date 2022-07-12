@@ -24,9 +24,7 @@ export default class CrossmintEmbed {
     }
 
     static async init(config: CrossmintEmbedConfig) {
-        const client = new CrossmintEmbed(config);
-
-        return client;
+        return new CrossmintEmbed(config);
     }
 
     async login(): Promise<string | undefined | null> {
