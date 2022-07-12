@@ -1,4 +1,3 @@
-import StorageAdapter from "./adapters/StorageAdapter";
 import WindowAdapter from "./adapters/WindowAdapter";
 import { ALLOWED_ORIGINS } from "./consts/origins";
 import { CrossmintEmbedConfig } from "./types";
@@ -7,6 +6,7 @@ import {
     CrossmintEmbedRequestType,
     CrossmintEmbedSignMessageData,
 } from "./types/requests";
+import { htmlToElement } from "./utils/iframe";
 import buildSiteMetadata from "./utils/siteMetadata";
 import { sleep } from "./utils/sleep";
 
@@ -26,14 +26,16 @@ export default class CrossmintEmbed {
     static async init(config: CrossmintEmbedConfig) {
         const client = new CrossmintEmbed(config);
 
-        await StorageAdapter.init();
-
         return client;
     }
 
     async login(): Promise<string | undefined | null> {
-        const account = await StorageAdapter.getAccountByChain(this._config.chain);
-        if (account !== undefined) return account;
+        const account = await this.getLoginFromIFrame();
+
+        if (account !== undefined) {
+            console.log("[crossmint] Received account from auto connect");
+            return account;
+        }
 
         const crossmintWindow = new WindowAdapter();
         await crossmintWindow.init({ parentWindow: window, url: this._frameUrl });
@@ -53,7 +55,6 @@ export default class CrossmintEmbed {
                         const { account } = data as { account: string };
 
                         _account = account;
-                        await StorageAdapter.storeAccountForChain(_account, this._config.chain);
                         crossmintWindow.controlledWindow?.close();
                         break;
                     case CrossmintEmbedRequestType.USER_REJECT:
@@ -132,7 +133,7 @@ export default class CrossmintEmbed {
     }
 
     async cleanUp() {
-        await StorageAdapter.clear();
+        // Add any cleanup here
     }
 
     async postMessage(
@@ -157,5 +158,68 @@ export default class CrossmintEmbed {
             },
             targetOrigin
         );
+    }
+
+    private async getLoginFromIFrame(): Promise<string | undefined> {
+        console.log("[crossmint] Attempting auto connect");
+
+        const loginIframe = htmlToElement<HTMLIFrameElement>(
+            `<iframe
+              id="crossmintIframe"
+              class="crossmintIframe"
+              src="${this._frameUrl}"
+              style="display: none; position: fixed; top: 0; right: 0; width: 100%;
+              height: 100%; border: none; border-radius: 0; z-index: 999"
+            ></iframe>`
+        );
+
+        return await new Promise<string | undefined>((resolve, reject) => {
+            try {
+                window.document.body.appendChild(loginIframe);
+
+                loginIframe.addEventListener("load", async () => {
+                    const timeout = setTimeout(() => {
+                        console.log(
+                            "[crossmint] Failed to auto connect within",
+                            this._config.maxTimeAutoConnectMs,
+                            "ms"
+                        );
+                        window.removeEventListener("message", handleMessage);
+                        window.document.body.removeChild(loginIframe);
+
+                        resolve(undefined);
+                    }, this._config.maxTimeAutoConnectMs);
+
+                    const handleMessage = async (e: MessageEvent<any>) => {
+                        if (!ALLOWED_ORIGINS.includes(e.origin)) return;
+
+                        const { request, data } = e.data;
+
+                        switch (request) {
+                            case CrossmintEmbedRequestType.REQUEST_ACCOUNTS:
+                                const { account } = data;
+
+                                clearTimeout(timeout);
+                                resolve(account);
+                                break;
+                            default:
+                                break;
+                        }
+                    };
+
+                    window.addEventListener("message", handleMessage);
+
+                    this.postMessage(
+                        loginIframe.contentWindow!,
+                        CrossmintEmbedRequestType.REQUEST_ACCOUNTS,
+                        undefined,
+                        this._frameUrl
+                    );
+                });
+            } catch (e) {
+                console.log(e);
+                resolve(undefined);
+            }
+        });
     }
 }

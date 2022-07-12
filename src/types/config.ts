@@ -11,6 +11,8 @@ export interface CrossmintEmbedParams {
 
     environment?: CrossmintEnvironment;
 
+    maxTimeAutoConnectMs?: number;
+
     /**
      * Dapp Metadata
      * If metadata is not provided, it will be extracted from your application automatically
@@ -31,6 +33,8 @@ export interface CrossmintEmbedConfig {
     chain: BlockchainTypes;
 
     environment: CrossmintEnvironment;
+
+    maxTimeAutoConnectMs: number;
 
     appMetadata?: AppMetadata;
 }
