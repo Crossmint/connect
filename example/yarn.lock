@@ -27,6 +27,15 @@
     eip1193-provider "^1.0.1"
     js-sha3 "^0.8.0"
 
+"@crossmint/embed@^0.0.1-alpha.0":
+  version "0.0.1-alpha.0"
+  resolved "https://registry.yarnpkg.com/@crossmint/embed/-/embed-0.0.1-alpha.0.tgz#f4e9026858ad1a37e99426b5b275bee6dde57d0a"
+  integrity sha512-1CCV4Zvw3qeWDDFOgdOsoIt7QvlochlB6ezG7V8G/NiMEv0rIhlNOpXuqpYiG5JaMLjiQ5+AFb1db1EojbWgWQ==
+  dependencies:
+    "@solana/wallet-adapter-base" "^0.9.7"
+    "@solana/web3.js" "^1.47.3"
+    store2 "^2.13.2"
+
 "@eslint/eslintrc@^1.3.0":
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-1.3.0.tgz#29f92c30bb3e771e4a2048c95fa6855392dfac4f"
@@ -3030,6 +3039,11 @@ source-map-js@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/source-map-js/-/source-map-js-1.0.2.tgz#adbc361d9c62df380125e7f161f71c826f1e490c"
   integrity sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==
+
+store2@^2.13.2:
+  version "2.13.2"
+  resolved "https://registry.yarnpkg.com/store2/-/store2-2.13.2.tgz#01ad8802ca5b445b9c316b55e72645c13a3cd7e3"
+  integrity sha512-CMtO2Uneg3SAz/d6fZ/6qbqqQHi2ynq6/KzMD/26gTkiEShCcpqFfTHgOxsE0egAq6SX3FmN4CeSqn8BzXQkJg==
 
 stream-browserify@^3.0.0:
   version "3.0.0"
