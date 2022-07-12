@@ -35,7 +35,14 @@ export const SendTransaction: FC = () => {
     }, [publicKey, connection, sendTransaction]);
 
     return (
-        <button onClick={onClick} disabled={!publicKey}>
+        <button
+            style={{
+                padding: "8px 14px",
+                margin: "12px",
+            }}
+            onClick={onClick}
+            disabled={!publicKey}
+        >
             Send Transaction (devnet)
         </button>
     );

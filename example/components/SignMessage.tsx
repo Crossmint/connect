@@ -27,15 +27,16 @@ export const SignMessage: FC = () => {
         }
     }, [publicKey, signMessage]);
 
-    return signMessage ? (
+    return (
         <button
             style={{
                 padding: "8px 14px",
+                margin: "12px",
             }}
             onClick={onClick}
             disabled={!publicKey}
         >
             Sign Message
         </button>
-    ) : null;
+    );
 };
