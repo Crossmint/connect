@@ -32,13 +32,8 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
     const wallets = useMemo(
         () => [
             new PhantomWalletAdapter(),
-            new GlowWalletAdapter(),
-            new SlopeWalletAdapter(),
-            new SolflareWalletAdapter({ network }),
-            new TorusWalletAdapter(),
             new CrossmintSolanaWalletAdapter({
                 apiKey: "maxwell-test",
-                environment: CrossmintEnvironment.LOCAL,
             }),
         ],
         [network]
