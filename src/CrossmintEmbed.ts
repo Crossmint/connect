@@ -27,14 +27,13 @@ export default class CrossmintEmbed {
     static async init(config: CrossmintEmbedConfig) {
         const client = new CrossmintEmbed(config);
 
-        await StorageAdapter.init();
+        // await StorageAdapter.init();
 
         return client;
     }
 
     async login(): Promise<string | undefined | null> {
-        const account =
-            (await this.getLoginFromIFrame()) ?? (await StorageAdapter.getAccountByChain(this._config.chain));
+        const account = await this.getLoginFromIFrame();
 
         if (account !== undefined) {
             console.log("[crossmint] Received account from auto connect");
@@ -59,7 +58,7 @@ export default class CrossmintEmbed {
                         const { account } = data as { account: string };
 
                         _account = account;
-                        await StorageAdapter.storeAccountForChain(_account, this._config.chain);
+                        // await StorageAdapter.storeAccountForChain(_account, this._config.chain);
                         crossmintWindow.controlledWindow?.close();
                         break;
                     case CrossmintEmbedRequestType.USER_REJECT:
@@ -138,7 +137,7 @@ export default class CrossmintEmbed {
     }
 
     async cleanUp() {
-        await StorageAdapter.clear();
+        // await StorageAdapter.clear();
     }
 
     async postMessage(

@@ -10,7 +10,7 @@
         "noEmitOnError": true,
         "stripInternal": true,
         "moduleResolution": "node",
-        "jsx": "react",
+        "jsx": "react-jsx",
         "strict": true,
         "esModuleInterop": true,
         "resolveJsonModule": true,

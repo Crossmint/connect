@@ -34,6 +34,11 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
             new PhantomWalletAdapter(),
             new CrossmintSolanaWalletAdapter({
                 apiKey: "maxwell-test",
+                // environment: CrossmintEnvironment.LOCAL,
+                maxTimeAutoConnectMs: 500,
+            }),
+            new TorusWalletAdapter({
+                params: {},
             }),
         ],
         [network]
