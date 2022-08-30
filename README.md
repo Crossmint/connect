@@ -127,7 +127,7 @@ The following is an example of connecting to a user's Crossmint Ethereum account
     import { useState } from "react";
 
     export default function YourCustomConnectButton() {
-      const [address, setAddress] = (useState < string) | (undefined > undefined);
+      const [address, setAddress] = useState<string | undefined>(undefined);
 
       async function connectToCrossmint() {
         // Initialize the Crossmint embed.
