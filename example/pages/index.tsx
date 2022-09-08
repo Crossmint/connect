@@ -7,25 +7,7 @@ import { SendTransaction } from "../components/SendTransaction";
 import { SignMessage } from "../components/SignMessage";
 import styles from "../styles/Home.module.css";
 
-const TEST_COOKIE =
-    "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..mGMq14_aOB3Y5tkM._4NkxVuHbrX0xfF2Tipi69tNdjVK-F8-4F6J6Jtl9TPR3PsqZ0oP5wmPoHftNoXTLYXWXjq8l4jFX2gkchH6NLNu5DoE-hn2c88GvPWrjtwneQKE7_zJpioeQqxZMdve3MqRGrSveTBDdvfeWBWHk4Mpnh0dh0NSS-V86N2P3GkefkV9wiu4D-w3l9by5oDPwwTmrCMjM9ik8UWQicyQFEsamSYv57O2WEFk9YzuIvb7QaYwkip3dQ.tq5EVz2iGptZUuLOHZ5D-A";
-
 const Home: NextPage = () => {
-    async function testFetch() {
-        const res = await fetch(`http://localhost:3001/api/frame`, {
-            headers: {
-                // cookie: `__Secure-next-auth.session-token=${TEST_COOKIE}`,
-                authorization: `Bearer ${TEST_COOKIE}`,
-                // cookie: `next-auth.session-token=${TEST_COOKIE}`,
-            },
-        });
-
-        console.log(await res.json());
-    }
-
-    useEffect(() => {
-        testFetch();
-    }, []);
     return (
         <div className={styles.container}>
             <Head>
@@ -37,14 +19,6 @@ const Home: NextPage = () => {
             <WalletMultiButton />
             <SignMessage />
             <SendTransaction />
-
-            {/* <iframe
-                src="https://www.crossmint.io"
-                style={{
-                    width: "100%",
-                    height: "100%",
-                }}
-            /> */}
         </div>
     );
 };
