@@ -41,7 +41,7 @@ export default class CrossmintEmbed {
         }
 
         const crossmintWindow = new WindowAdapter();
-        await crossmintWindow.init({ parentWindow: window, url: this._frameUrl });
+        await crossmintWindow.init({ parentWindow: window, url: this._frameUrl, target: "_blank" });
 
         return await new Promise<string | undefined | null>(async (resolve, reject) => {
             console.log("[crossmint-embed] Waiting login");
