@@ -24,6 +24,7 @@ export default class WindowAdapter {
         target?: string;
     }) {
         return await new Promise<Window | undefined>((resolve, reject) => {
+            console.log({ url, width, height, target });
             const _window = parentWindow.open(url, target, this.createPopupString(width, height));
 
             if (!_window) {
