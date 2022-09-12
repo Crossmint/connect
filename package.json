@@ -25,11 +25,12 @@
         "create-version-file": "node -p \"'export const LIB_VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > src/consts/version.ts",
         "prebuild": "yarn run create-version-file",
         "clean": "shx rm -rf lib/*",
-        "build": "yarn clean && tsup src/index.ts --format esm,cjs --outDir ./lib --minify --dts",
+        "build": "yarn clean && tsup src/index.ts --format esm,cjs --outDir ./lib --minify --dts --target es5",
         "fmt": "prettier --write {*,**/*}.{js,ts,jsx,tsx,json}",
         "test": "jest"
     },
     "devDependencies": {
+        "@swc/core": "^1.3.0",
         "@trivago/prettier-plugin-sort-imports": "^3.2.0",
         "@types/prettier": "^2.6.3",
         "@types/react": "^18.0.17",
@@ -39,8 +40,6 @@
         "typescript": "^4.7.4"
     },
     "dependencies": {
-        "@solana/wallet-adapter-base": "^0.9.7",
-        "@solana/web3.js": "^1.47.3",
         "ethers": "^5.6.9",
         "react": "^18.2.0",
         "store2": "^2.13.2"
