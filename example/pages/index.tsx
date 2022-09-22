@@ -1,7 +1,6 @@
-import { WalletDisconnectButton, WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useEffect } from "react";
 
 import { SendTransaction } from "../components/SendTransaction";
 import { SignMessage } from "../components/SignMessage";
