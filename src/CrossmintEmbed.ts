@@ -31,17 +31,18 @@ export default class CrossmintEmbed {
     }
 
     async login(): Promise<string | undefined | null> {
+        const crossmintWindow = new WindowAdapter();
+        crossmintWindow.init({ parentWindow: window, url: this._frameUrl });
+
         if (this._config.autoConnect) {
             const account = await this.getLoginFromIFrame();
 
             if (account != null) {
                 console.log("[crossmint-embed] Received account from auto connect");
+                crossmintWindow.close();
                 return account;
             }
         }
-
-        const crossmintWindow = new WindowAdapter();
-        await crossmintWindow.init({ parentWindow: window, url: this._frameUrl });
 
         return await new Promise<string | undefined | null>(async (resolve, reject) => {
             console.log("[crossmint-embed] Waiting login");
@@ -90,7 +91,7 @@ export default class CrossmintEmbed {
 
     async signMessage(message: Uint8Array): Promise<Uint8Array | undefined | null> {
         const crossmintWindow = new WindowAdapter();
-        await crossmintWindow.init({ parentWindow: window, url: this._frameUrl });
+        crossmintWindow.init({ parentWindow: window, url: this._frameUrl });
 
         return await new Promise<Uint8Array | undefined | null>(async (resolve, reject) => {
             console.log("[crossmint-embed] Waiting sign message");
