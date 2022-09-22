@@ -1,7 +1,7 @@
 {
     "name": "@crossmint/embed",
     "version": "0.0.3",
-    "author": "Paella Labs Inc",
+    "author": "Crossmint",
     "license": "Apache-2.0",
     "repository": "https://github.com/Crossmint/embed",
     "type": "module",
