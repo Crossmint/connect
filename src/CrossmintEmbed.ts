@@ -24,20 +24,20 @@ export default class CrossmintEmbed {
         this._config = config;
     }
 
-    static async init(config: CrossmintEmbedConfig) {
+    static init(config: CrossmintEmbedConfig) {
         const client = new CrossmintEmbed(config);
-
-        // await StorageAdapter.init();
 
         return client;
     }
 
     async login(): Promise<string | undefined | null> {
-        const account = await this.getLoginFromIFrame();
+        if (this._config.autoConnect) {
+            const account = await this.getLoginFromIFrame();
 
-        if (account !== undefined) {
-            console.log("[crossmint] Received account from auto connect");
-            return account;
+            if (account != null) {
+                console.log("[crossmint-embed] Received account from auto connect");
+                return account;
+            }
         }
 
         const crossmintWindow = new WindowAdapter();

@@ -59,7 +59,7 @@ export class CrossmintSolanaWalletAdapter extends BaseMessageSignerWalletAdapter
 
             this._connecting = true;
 
-            const client = await CrossmintEmbed.init(this._config);
+            const client = CrossmintEmbed.init(this._config);
 
             const account = await client.login();
 

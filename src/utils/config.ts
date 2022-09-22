@@ -6,6 +6,7 @@ export function buildConfig(params: CrossmintEmbedParams): CrossmintEmbedConfig 
         libVersion: LIB_VERSION,
         apiKey: params.apiKey,
         environment: params.environment || CrossmintEnvironment.PROD,
+        autoConnect: params.autoConnect ?? true,
         maxTimeAutoConnectMs: params.maxTimeAutoConnectMs || 300,
         appMetadata: params.appMetadata,
         chain: params.chain,
