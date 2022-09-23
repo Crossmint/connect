@@ -10,7 +10,7 @@ export default class WindowAdapter {
         this.onClose = onClose;
     }
 
-    async init({
+    init({
         parentWindow,
         url,
         width = 375,
@@ -23,19 +23,21 @@ export default class WindowAdapter {
         height?: number;
         target?: string;
     }) {
-        return await new Promise<Window | undefined>((resolve, reject) => {
-            const _window = parentWindow.open(url, target, this.createPopupString(width, height));
+        const _window = parentWindow.open(url, target, this.createPopupString(width, height));
 
-            if (!_window) {
-                reject(new Error(`Failed to open popup. This may be caused by the browsers' popup blocker`));
-            }
+        if (!_window) {
+            throw new Error(`Failed to open popup. This may be caused by the browsers' popup blocker`);
+        }
 
-            this.controlledWindow = _window ?? undefined;
-            this.open = true;
+        this.controlledWindow = _window ?? undefined;
+        this.open = true;
 
-            this.registerListeners();
-            resolve(this.controlledWindow);
-        });
+        this.registerListeners();
+        return this.controlledWindow;
+    }
+
+    close() {
+        this.controlledWindow?.close();
     }
 
     private registerListeners() {

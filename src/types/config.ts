@@ -11,6 +11,7 @@ export interface CrossmintEmbedParams {
 
     environment?: CrossmintEnvironment;
 
+    autoConnect?: boolean;
     maxTimeAutoConnectMs?: number;
 
     /**
@@ -34,6 +35,7 @@ export interface CrossmintEmbedConfig {
 
     environment: CrossmintEnvironment;
 
+    autoConnect: boolean;
     maxTimeAutoConnectMs: number;
 
     appMetadata?: AppMetadata;
