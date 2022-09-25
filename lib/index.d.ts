@@ -35,6 +35,7 @@ interface CrossmintEmbedParams {
     apiKey: string;
     chain: BlockchainTypes;
     environment?: CrossmintEnvironment;
+    autoConnect?: boolean;
     maxTimeAutoConnectMs?: number;
     /**
      * Dapp Metadata
@@ -51,6 +52,7 @@ interface CrossmintEmbedConfig {
     apiKey: string;
     chain: BlockchainTypes;
     environment: CrossmintEnvironment;
+    autoConnect: boolean;
     maxTimeAutoConnectMs: number;
     appMetadata?: AppMetadata;
 }
@@ -75,7 +77,7 @@ declare class CrossmintEmbed {
     private _config;
     private get _frameUrl();
     private constructor();
-    static init(config: CrossmintEmbedConfig): Promise<CrossmintEmbed>;
+    static init(config: CrossmintEmbedConfig): CrossmintEmbed;
     login(): Promise<string | undefined | null>;
     signMessage(message: Uint8Array): Promise<Uint8Array | undefined | null>;
     cleanUp(): Promise<void>;
