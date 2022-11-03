@@ -27,10 +27,10 @@
     eip1193-provider "^1.0.1"
     js-sha3 "^0.8.0"
 
-"@crossmint/embed@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@crossmint/embed/-/embed-0.0.2.tgz#4d0a56d7ee56fc2cd50a98767d5da3735dab47b4"
-  integrity sha512-K0dxKefxD2GxRmcaUstptc8o48hmmx4lYB8LzzZR7wqgmhimFYSWSaHFvNwtQrR5quFOJmGviMQbcTGUtwghxw==
+"@crossmint/connect@^0.0.5-alpha-1":
+  version "0.0.5-alpha-1"
+  resolved "https://registry.yarnpkg.com/@crossmint/connect/-/connect-0.0.5-alpha-1.tgz#7d19e358a0ace4377d8eba0e68e2773aa2e7be79"
+  integrity sha512-bokFjnjzaeFkU3WkVODX07xN+qEDuEnUzrbskNHsOO1ruN8ZPeJr+wW2NYKp4y8Aehct5DG/6z8dNYrYcjLreQ==
   dependencies:
     "@solana/wallet-adapter-base" "^0.9.7"
     "@solana/web3.js" "^1.47.3"
