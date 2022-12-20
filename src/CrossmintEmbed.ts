@@ -107,7 +107,12 @@ export default class CrossmintEmbed {
                     case CrossmintEmbedRequestType.SIGN_MESSAGE:
                         const { signedMessage } = data;
 
-                        _signedMessage = new Uint8Array(signedMessage.split(",").map(Number));
+                        if (["ethereum", "polygon"].includes(this._config.chain)) {
+                            _signedMessage = new TextEncoder().encode(signedMessage);
+                        } else {
+                            _signedMessage = new Uint8Array(signedMessage.split(",").map(Number));
+                        }
+
                         crossmintWindow.controlledWindow?.close();
                         break;
                     case CrossmintEmbedRequestType.USER_REJECT:
