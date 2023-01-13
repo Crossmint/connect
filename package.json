@@ -1,6 +1,6 @@
 {
     "name": "@crossmint/connect",
-    "version": "0.0.5-alpha-2",
+    "version": "0.0.8",
     "author": "Crossmint",
     "license": "Apache-2.0",
     "repository": "https://github.com/Crossmint/connect",
