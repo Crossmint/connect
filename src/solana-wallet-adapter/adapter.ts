@@ -16,7 +16,7 @@ import { buildConfig } from "../utils/config";
 
 export class CrossmintSolanaWalletAdapter extends BaseMessageSignerWalletAdapter {
     name = CrossmintWalletName;
-    url = "https://www.crossmint.io";
+    url = "https://www.crossmint.com";
     icon = CROSSMINT_LOGO_21x21;
 
     private _connecting: boolean;
