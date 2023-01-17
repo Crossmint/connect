@@ -19,7 +19,7 @@ export default class CrossmintEmbed {
     }
 
     private constructor(config: CrossmintEmbedConfig) {
-        console.log("[crossmint-embed] Initialized embed with version:", config.libVersion);
+        console.log("[crossmint-connect] Initialized with version:", config.libVersion);
 
         this._config = config;
     }
@@ -38,14 +38,14 @@ export default class CrossmintEmbed {
             const account = await this.getLoginFromIFrame();
 
             if (account != null) {
-                console.log("[crossmint-embed] Received account from auto connect");
+                console.log("[crossmint-connect] Received account from auto connect");
                 crossmintWindow.close();
                 return account;
             }
         }
 
         return await new Promise<string | undefined | null>(async (resolve, reject) => {
-            console.log("[crossmint-embed] Waiting login");
+            console.log("[crossmint-connect] Waiting login");
 
             let _account: string | undefined | null = undefined;
 
@@ -63,7 +63,7 @@ export default class CrossmintEmbed {
                         crossmintWindow.controlledWindow?.close();
                         break;
                     case CrossmintEmbedRequestType.USER_REJECT:
-                        console.log("[crossmint-embed] User rejected login");
+                        console.log("[crossmint-connect] User rejected login");
                         _account = null;
                         break;
                     default:
@@ -94,7 +94,7 @@ export default class CrossmintEmbed {
         crossmintWindow.init({ parentWindow: window, url: this._frameUrl });
 
         return await new Promise<Uint8Array | undefined | null>(async (resolve, reject) => {
-            console.log("[crossmint-embed] Waiting sign message");
+            console.log("[crossmint-connect] Waiting sign message");
 
             let _signedMessage: Uint8Array | undefined | null = undefined;
 
@@ -111,7 +111,7 @@ export default class CrossmintEmbed {
                         crossmintWindow.controlledWindow?.close();
                         break;
                     case CrossmintEmbedRequestType.USER_REJECT:
-                        console.log("[crossmint-embed] User rejected signMessage");
+                        console.log("[crossmint-connect] User rejected signMessage");
                         _signedMessage = null;
                         break;
                     default:

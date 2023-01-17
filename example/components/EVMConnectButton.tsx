@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { BlockchainTypes, CrossmintEVMWalletAdapter, CrossmintEnvironment } from "@crossmint/embed";
+import { BlockchainTypes, CrossmintEVMWalletAdapter } from "@crossmint/connect";
 
 export default function EVMConnectButton() {
     const [address, setAddress] = useState<string | undefined>(undefined);

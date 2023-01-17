@@ -1,9 +1,9 @@
 {
-    "name": "@crossmint/embed",
-    "version": "0.0.4",
+    "name": "@crossmint/connect",
+    "version": "0.0.8",
     "author": "Crossmint",
     "license": "Apache-2.0",
-    "repository": "https://github.com/Crossmint/embed",
+    "repository": "https://github.com/Crossmint/connect",
     "type": "module",
     "sideEffects": false,
     "main": "lib/index.cjs",

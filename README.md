@@ -1,4 +1,4 @@
-# @crossmint/embed
+# @crossmint/connect
 
 Embed the Crossmint wallet directly in your app
 
@@ -8,7 +8,7 @@ Embed the Crossmint wallet directly in your app
 
 ```shell
 
-git clone https://github.com/Crossmint/embed.git
+git clone https://github.com/Crossmint/connect.git
 
 ```
 
@@ -16,7 +16,7 @@ git clone https://github.com/Crossmint/embed.git
 
 ```shell
 
-cd embed
+cd connect
 
 yarn install
 
@@ -32,7 +32,7 @@ yarn build
 
 ## Run the example locally
 
-1. Link `@crossmint/embed` from the root `/embed`:
+1. Link `@crossmint/connect` from the root `/connect`:
 
 ```shell
 
@@ -46,7 +46,7 @@ yarn link
 
 cd example
 
-yarn link "@crossmint/embed"
+yarn link "@crossmint/connect"
 
 ```
 
@@ -81,7 +81,7 @@ The `CrossmintSolanaWalletAdapter` is fully compatible with [@solana/wallet-adap
     } from '@solana/wallet-adapter-react-ui';
     import { clusterApiUrl } from '@solana/web3.js';
 
-    import {CrossmintSolanaWalletAdapter} from "@crossmint/embed"
+    import {CrossmintSolanaWalletAdapter} from "@crossmint/connect"
 
     // Default styles that can be overridden by your app
     require('@solana/wallet-adapter-react-ui/styles.css');
@@ -122,7 +122,7 @@ The following is an example of connecting to a user's Crossmint Ethereum account
       BlockchainTypes,
       CrossmintEnvironment,
       CrossmintEVMWalletAdapter,
-    } from "@crossmint/embed";
+    } from "@crossmint/connect";
 
     import { useState } from "react";
 
@@ -130,14 +130,14 @@ The following is an example of connecting to a user's Crossmint Ethereum account
       const [address, setAddress] = useState<string | undefined>(undefined);
 
       async function connectToCrossmint() {
-        // Initialize the Crossmint embed.
-        const _crossmintEmbed = new CrossmintEVMWalletAdapter({
+        // Initialize the Crossmint connect.
+        const _crossmintConnect = new CrossmintEVMWalletAdapter({
           apiKey: "<YOUR_API_KEY>",
           chain: BlockchainTypes.ETHEREUM, // BlockchainTypes.ETHEREUM || BlockchainTypes.POLYGON. For solana use BlockchainTypes.SOLANA
         });
 
         // Ask the user to sign in and give access to their publicKey
-        const address = await _crossmintEmbed.connect();
+        const address = await _crossmintConnect.connect();
 
         // If the user successfully connects to Crossmint, the address will be returned.
         if (address) {

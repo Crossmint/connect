@@ -16,22 +16,22 @@ import { buildConfig } from "../utils/config";
 
 export class CrossmintSolanaWalletAdapter extends BaseMessageSignerWalletAdapter {
     name = CrossmintWalletName;
-    url = "https://www.crossmint.io";
+    url = "https://www.crossmint.com";
     icon = CROSSMINT_LOGO_21x21;
 
     private _connecting: boolean;
     private _publicKey: PublicKey | null;
-    private _readyState: WalletReadyState =
-        typeof window === "undefined" ? WalletReadyState.Unsupported : WalletReadyState.Loadable;
+    private _forceInstalled = false;
 
     private _config: CrossmintEmbedConfig;
     private _client?: CrossmintEmbed;
 
-    constructor(params: Omit<CrossmintEmbedParams, "chain">) {
+    constructor(params: Omit<CrossmintEmbedParams & { forceInstalled?: boolean }, "chain">) {
         super();
 
         this._connecting = false;
         this._publicKey = null;
+        this._forceInstalled = params.forceInstalled ?? this._forceInstalled;
 
         this._config = buildConfig({ ...params, chain: BlockchainTypes.SOLANA });
     }
@@ -49,13 +49,20 @@ export class CrossmintSolanaWalletAdapter extends BaseMessageSignerWalletAdapter
     }
 
     get readyState(): WalletReadyState {
-        return this._readyState;
+        return typeof window === "undefined"
+            ? WalletReadyState.Unsupported
+            : this._forceInstalled
+            ? WalletReadyState.Installed
+            : WalletReadyState.Loadable;
     }
 
     async connect(): Promise<void> {
         try {
             if (this.connected || this.connecting) return;
-            if (this._readyState !== WalletReadyState.Loadable) throw new WalletNotReadyError();
+
+            if (![WalletReadyState.Installed, WalletReadyState.Loadable].includes(this.readyState)) {
+                throw new WalletNotReadyError();
+            }
 
             this._connecting = true;
 
