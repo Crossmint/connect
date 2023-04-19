@@ -2,6 +2,7 @@ import { CrossmintEnvironment } from "../types";
 import { CardanoNetwork } from "./types";
 
 export * from "./adapter";
+export * from "./types";
 
 export function cardanoNetworkToCrossmintEnvironment(network: CardanoNetwork): CrossmintEnvironment {
     switch (network) {
