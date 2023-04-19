@@ -5,4 +5,5 @@ export enum BlockchainTypes {
     SOLANA = "solana",
     ETHEREUM = "ethereum",
     POLYGON = "polygon",
+    CARDANO = "cardano"
 }
