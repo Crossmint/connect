@@ -1,4 +1,4 @@
-import { C, toHex } from "@jpg-store/lucid-cardano";
+import { C, toHex } from "lucid-cardano";
 
 import CrossmintEmbed from "../CrossmintEmbed";
 import { CROSSMINT_LOGO_21x21, CrossmintWalletName } from "../consts/branding";
