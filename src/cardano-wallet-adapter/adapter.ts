@@ -1,8 +1,9 @@
+import { C, toHex } from "lucid-cardano";
+
 import CrossmintEmbed from "../CrossmintEmbed";
 import { CROSSMINT_LOGO_21x21, CrossmintWalletName } from "../consts/branding";
 import { BlockchainTypes, CrossmintEmbedConfig, CrossmintEmbedParams, CrossmintEnvironment } from "../types";
 import { buildConfig } from "../utils/config";
-import { sleep } from "../utils/sleep";
 import { CardanoWalletApi } from "./types";
 
 export class CrossmintCardanoWalletAdapter {
@@ -41,16 +42,16 @@ export class CrossmintCardanoWalletAdapter {
                 throw new Error("User rejected the request or closed the window");
             }
 
-            let address: string;
+            let hexAddress: string;
             try {
-                address = account;
+                hexAddress = toHex(C.Address.from_bech32(account).to_bytes());
             } catch (error: any) {
                 throw new Error(error?.message, error);
             }
 
             this._client = client;
 
-            const getUsedAddresses = async () => [address];
+            const getUsedAddresses = async () => [hexAddress];
             const getNetworkId = async () => (this._config.environment === CrossmintEnvironment.PROD ? 1 : 0);
 
             const walletApi = { getUsedAddresses, getNetworkId };
