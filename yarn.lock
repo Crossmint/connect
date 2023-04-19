@@ -221,6 +221,11 @@
     "@babel/helper-validator-identifier" "^7.18.6"
     to-fast-properties "^2.0.0"
 
+"@deno/shim-crypto@~0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@deno/shim-crypto/-/shim-crypto-0.3.1.tgz#416155b2b6f9ad728f80ebcb422c803efc1023c2"
+  integrity sha512-ed4pNnfur6UbASEgF34gVxR9p7Mc3qF+Ygbmjiil8ws5IhNFhPDFy5vE5hQAUA9JmVsSxXPcVLM5Rf8LOZqQ5Q==
+
 "@ethersproject/abi@5.6.4", "@ethersproject/abi@^5.6.3":
   version "5.6.4"
   resolved "https://registry.yarnpkg.com/@ethersproject/abi/-/abi-5.6.4.tgz#f6e01b6ed391a505932698ecc0d9e7a99ee60362"
@@ -561,6 +566,17 @@
     "@ethersproject/logger" "^5.6.0"
     "@ethersproject/properties" "^5.6.0"
     "@ethersproject/strings" "^5.6.1"
+
+"@jpg-store/lucid-cardano@0.9.1":
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/@jpg-store/lucid-cardano/-/lucid-cardano-0.9.1.tgz#9e243861a2ccff3664c906a29a4df9b143a134e5"
+  integrity sha512-5hu+g+ZiRszrEzE2HTgqzU+N6GkZ+1OzxOQJAajLNVJHWgZ6HEkKkiOPkShZwTng1c0j/1ikRylYi0KT327RpA==
+  dependencies:
+    "@deno/shim-crypto" "~0.3.1"
+    "@peculiar/webcrypto" "^1.4.0"
+    node-fetch "^3.2.3"
+    undici "^5.8.0"
+    ws "^8.10.0"
 
 "@jridgewell/gen-mapping@^0.3.2":
   version "0.3.2"
@@ -936,6 +952,13 @@ bundle-require@^3.0.2:
   integrity sha512-VXG6epB1yrLAvWVQpl92qF347/UXmncQj7J3U8kZEbdVZ1ZkQyr4hYeL/9RvcE8vVVdp53dY78Fd/3pqfRqI1A==
   dependencies:
     load-tsconfig "^0.2.0"
+
+busboy@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/busboy/-/busboy-1.6.0.tgz#966ea36a9502e43cdb9146962523b92f531f6893"
+  integrity sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==
+  dependencies:
+    streamsearch "^1.1.0"
 
 cac@^6.7.12:
   version "6.7.12"
@@ -1594,15 +1617,6 @@ loose-envify@^1.1.0:
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
 
-lucid-cardano@^0.10.1:
-  version "0.10.1"
-  resolved "https://registry.yarnpkg.com/lucid-cardano/-/lucid-cardano-0.10.1.tgz#816bfe2304bfee306cd6abb30160454f91214a1d"
-  integrity sha512-mqdDebVjAUIurqHLkAGBi+fpLdML2HcjuiJBoYT8X8goNvgmDlPdqAvvkC+K86tl/VVO+4txnyskzj3iWyaq/g==
-  dependencies:
-    "@peculiar/webcrypto" "^1.4.0"
-    node-fetch "^3.2.3"
-    ws "^8.10.0"
-
 merge-stream@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/merge-stream/-/merge-stream-2.0.0.tgz#52823629a14dd00c9770fb6ad47dc6310f2c1f60"
@@ -1956,6 +1970,11 @@ store2@^2.13.2:
   resolved "https://registry.yarnpkg.com/store2/-/store2-2.13.2.tgz#01ad8802ca5b445b9c316b55e72645c13a3cd7e3"
   integrity sha512-CMtO2Uneg3SAz/d6fZ/6qbqqQHi2ynq6/KzMD/26gTkiEShCcpqFfTHgOxsE0egAq6SX3FmN4CeSqn8BzXQkJg==
 
+streamsearch@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/streamsearch/-/streamsearch-1.1.0.tgz#404dd1e2247ca94af554e841a8ef0eaa238da764"
+  integrity sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg==
+
 strip-final-newline@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/strip-final-newline/-/strip-final-newline-2.0.0.tgz#89b852fb2fcbe936f6f4b3187afb0a12c1ab58ad"
@@ -2082,6 +2101,13 @@ typescript@^4.7.4:
   version "4.7.4"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.4.tgz#1a88596d1cf47d59507a1bcdfb5b9dfe4d488235"
   integrity sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==
+
+undici@^5.8.0:
+  version "5.21.2"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-5.21.2.tgz#329f628aaea3f1539a28b9325dccc72097d29acd"
+  integrity sha512-f6pTQ9RF4DQtwoWSaC42P/NKlUjvezVvd9r155ohqkwFNRyBKM3f3pcty3ouusefNRyM25XhIQEbeQ46sZDJfQ==
+  dependencies:
+    busboy "^1.6.0"
 
 update-browserslist-db@^1.0.4:
   version "1.0.4"

@@ -1,4 +1,4 @@
-import { C, toHex } from "lucid-cardano";
+import { C, toHex } from "@jpg-store/lucid-cardano";
 
 import CrossmintEmbed from "../CrossmintEmbed";
 import { CROSSMINT_LOGO_21x21, CrossmintWalletName } from "../consts/branding";
@@ -6,7 +6,7 @@ import { BlockchainTypes, CrossmintEmbedConfig, CrossmintEmbedParams, CrossmintE
 import { buildConfig } from "../utils/config";
 import { CardanoWalletApi } from "./types";
 
-export default class CrossmintCardanoWalletAdapter {
+export class CrossmintCardanoWalletAdapter {
     name = CrossmintWalletName;
     url = "https://www.crossmint.com";
     icon = CROSSMINT_LOGO_21x21;
