@@ -60,7 +60,6 @@ export class CrossmintCardanoWalletAdapter {
             };
 
             return { getUsedAddresses, getNetworkId };
-
         } catch (error: any) {
             throw error;
         }

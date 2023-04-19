@@ -8,4 +8,4 @@ export enum CardanoNetwork {
 export type CardanoWalletApi = {
     getNetworkId(): Promise<number>;
     getUsedAddresses(): Promise<string[]>;
-  };
+};
