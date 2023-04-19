@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { CrossmintCardanoWalletAdapter, CrossmintEnvironment } from "@crossmint/connect";
+import { CrossmintCardanoWalletAdapter } from "@crossmint/connect";
 
 export default function YourCustomConnectButton() {
     const [hexAddress, setAddress] = useState<string | undefined>(undefined);
