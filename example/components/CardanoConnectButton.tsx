@@ -15,7 +15,7 @@ export default function YourCustomConnectButton() {
         const walletApi = await crossmintConnect.enable();
 
         if (await crossmintConnect.isEnabled()) {
-            const hexAddress = (await walletApi.getUsedAddresses())[0];
+            const [hexAddress] = await walletApi.getUsedAddresses();
             setAddress(hexAddress);
 
             const networkId = await walletApi.getNetworkId();
