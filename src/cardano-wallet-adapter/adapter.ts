@@ -51,13 +51,7 @@ export class CrossmintCardanoWalletAdapter {
             this._client = client;
 
             const getUsedAddresses = async () => [address];
-            const getNetworkId = async () => {
-                if (this._config.environment === CrossmintEnvironment.PROD) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            };
+            const getNetworkId = async () => (this._config.environment === CrossmintEnvironment.PROD ? 1 : 0);
 
             const walletApi = { getUsedAddresses, getNetworkId };
             this._api = walletApi;
