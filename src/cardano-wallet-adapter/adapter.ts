@@ -6,7 +6,7 @@ import { BlockchainTypes, CrossmintEmbedConfig, CrossmintEmbedParams, CrossmintE
 import { buildConfig } from "../utils/config";
 import { CardanoWalletApi } from "./types";
 
-export class CrossmintCardanoWalletAdapter {
+export default class CrossmintCardanoWalletAdapter {
     name = CrossmintWalletName;
     url = "https://www.crossmint.com";
     icon = CROSSMINT_LOGO_21x21;
