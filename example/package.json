@@ -9,7 +9,6 @@
         "lint": "next lint"
     },
     "dependencies": {
-        "@crossmint/connect": "^0.0.5-alpha-1",
         "@solana/wallet-adapter-base": "^0.9.7",
         "@solana/wallet-adapter-react": "^0.15.6",
         "@solana/wallet-adapter-react-ui": "^0.9.8",
