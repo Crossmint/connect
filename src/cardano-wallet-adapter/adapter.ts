@@ -59,7 +59,10 @@ export class CrossmintCardanoWalletAdapter {
                 }
             };
 
-            return { getUsedAddresses, getNetworkId };
+            const walletApi = { getUsedAddresses, getNetworkId };
+            this._api = walletApi;
+
+            return walletApi;
         } catch (error: any) {
             throw error;
         }
