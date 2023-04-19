@@ -1,59 +1,32 @@
-import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
-import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
-import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
-import {
-    GlowWalletAdapter,
-    PhantomWalletAdapter,
-    SlopeWalletAdapter,
-    SolflareWalletAdapter,
-    TorusWalletAdapter,
-} from "@solana/wallet-adapter-wallets";
-import { clusterApiUrl } from "@solana/web3.js";
-import { AppProps } from "next/app";
-import { FC, useMemo } from "react";
-import { Toaster } from "react-hot-toast";
+import { useState } from "react";
 
-import { CrossmintSolanaWalletAdapter } from "@crossmint/connect";
+import { CrossmintCardanoWalletAdapter } from "@crossmint/connect";
 
-// Use require instead of import since order matters
-require("@solana/wallet-adapter-react-ui/styles.css");
-require("../styles/globals.css");
+export default function YourCustomConnectButton() {
+    const [hexAddress, setAddress] = useState<string | undefined>(undefined);
 
-const App: FC<AppProps> = ({ Component, pageProps }) => {
-    // Can be set to 'devnet', 'testnet', or 'mainnet-beta'
-    const network = WalletAdapterNetwork.Devnet;
+    // Initialize the Crossmint connect.
+    const crossmintConnect = new CrossmintCardanoWalletAdapter({
+        apiKey: "<YOUR_API_KEY>",
+    });
 
-    // You can also provide a custom RPC endpoint
-    const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+    async function connectToCrossmint() {
+        // Ask the user to sign in and give access to their address
+        const walletApi = await crossmintConnect.enable();
 
-    // @solana/wallet-adapter-wallets includes all the adapters but supports tree shaking and lazy loading --
-    // Only the wallets you configure here will be compiled into your application, and only the dependencies
-    // of wallets that your users connect to will be loaded
-    const wallets = useMemo(
-        () => [
-            new PhantomWalletAdapter(),
-            new CrossmintSolanaWalletAdapter({
-                apiKey: "maxwell-test",
-                // environment: CrossmintEnvironment.STAGING,
-                maxTimeAutoConnectMs: 500,
-            }),
-            new TorusWalletAdapter({
-                params: {},
-            }),
-        ],
-        [network]
-    );
+        if (await crossmintConnect.isEnabled()) {
+            const [hexAddress] = await walletApi.getUsedAddresses();
+            setAddress(hexAddress);
+
+            const networkId = await walletApi.getNetworkId();
+        }
+
+        return walletApi;
+    }
 
     return (
-        <ConnectionProvider endpoint={endpoint}>
-            <WalletProvider wallets={wallets} autoConnect>
-                <WalletModalProvider>
-                    <Toaster />
-                    <Component {...pageProps} />
-                </WalletModalProvider>
-            </WalletProvider>
-        </ConnectionProvider>
+        <button onClick={connectToCrossmint} className="px-6 py-2 font-semibold text-black bg-white rounded-md">
+            {hexAddress ? hexAddress.slice(0, 6) + "..." : "Connect"}
+        </button>
     );
-};
-
-export default App;
+}
