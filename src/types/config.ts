@@ -12,7 +12,7 @@ export interface CrossmintEmbedParams {
      * Get yours at {@link https://console.crossmint.com | Developer Dashboard}
      * If you don't have a Project ID, you can use one of the following options:
      * 'crossmint' - This will return data from the user's Crossmint account
-     * 'all' - This will return user data for all projects the user has access to.
+     * '<project-id>' - This will return data from the user's Crossmint account under the project id
      */
     projectId?: string;
 
