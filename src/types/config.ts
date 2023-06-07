@@ -7,6 +7,15 @@ export interface CrossmintEmbedParams {
      */
     apiKey: string;
 
+    /**
+     * Project ID
+     * Get yours at {@link https://console.crossmint.com | Developer Dashboard}
+     * If you don't have a Project ID, you can use one of the following options:
+     * 'crossmint' - This will return data from the user's Crossmint account
+     * 'all' - This will return user data for all projects the user has access to.
+     */
+    projectId?: string;
+
     chain: BlockchainTypes;
 
     environment?: CrossmintEnvironment;
@@ -30,6 +39,7 @@ export interface CrossmintEmbedConfig {
     libVersion: string;
 
     apiKey: string;
+    projectId: string;
 
     chain: BlockchainTypes;
 

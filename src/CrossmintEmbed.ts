@@ -15,7 +15,7 @@ export default class CrossmintEmbed {
     private _config: CrossmintEmbedConfig;
 
     private get _frameUrl() {
-        return this._config.environment + "/frame";
+        return `${this._config.environment}/frame?projectId=${this._config.projectId}&chain=${this._config.chain}`;
     }
 
     private constructor(config: CrossmintEmbedConfig) {
@@ -156,6 +156,7 @@ export default class CrossmintEmbed {
                 data: {
                     libVersion: this._config.libVersion,
                     chain: this._config.chain,
+                    projectId: this._config.projectId,
                     apiKey: this._config.apiKey,
                     siteMetadata: await buildSiteMetadata(this._config.appMetadata),
                     ...data,
