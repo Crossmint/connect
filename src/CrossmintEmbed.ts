@@ -15,11 +15,10 @@ export default class CrossmintEmbed {
     private _config: CrossmintEmbedConfig;
 
     private get _frameUrl() {
-        if (this._config.projectId == null) {
-            return `${this._config.environment}/frame/2023-06-09?chain=${this._config.chain}`;
-        }
+        const { environment, chain, projectId } = this._config;
+        const projectIdQueryParam = projectId != null ? `&projectId=${projectId}` : "";
 
-        return `${this._config.environment}/frame/2023-06-09?chain=${this._config.chain}&projectId=${this._config.projectId}`;
+        return `${environment}/frame/2023-06-09?chain=${chain}${projectIdQueryParam}`;
     }
 
     private constructor(config: CrossmintEmbedConfig) {

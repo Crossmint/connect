@@ -39,7 +39,7 @@ export interface CrossmintEmbedConfig {
     libVersion: string;
 
     apiKey: string;
-    projectId: string;
+    projectId?: string;
 
     chain: BlockchainTypes;
 
