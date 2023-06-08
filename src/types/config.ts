@@ -9,10 +9,9 @@ export interface CrossmintEmbedParams {
 
     /**
      * Project ID
+     * This will return data from the user's Crossmint account under the Project ID.
      * Get yours at {@link https://console.crossmint.com | Developer Dashboard}
-     * If you don't have a Project ID, you can use one of the following options:
-     * 'crossmint' - This will return data from the user's Crossmint account
-     * '<project-id>' - This will return data from the user's Crossmint account under the project id
+     * If you don't have a Project ID, you can exclude this parameter or set it to null.
      */
     projectId?: string;
 
