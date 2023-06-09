@@ -15,7 +15,10 @@ export default class CrossmintEmbed {
     private _config: CrossmintEmbedConfig;
 
     private get _frameUrl() {
-        return this._config.environment + "/frame";
+        const { environment, chain, projectId } = this._config;
+        const projectIdQueryParam = projectId != null ? `&projectId=${projectId}` : "";
+
+        return `${environment}/frame/2023-06-09?chain=${chain}${projectIdQueryParam}`;
     }
 
     private constructor(config: CrossmintEmbedConfig) {
@@ -156,6 +159,7 @@ export default class CrossmintEmbed {
                 data: {
                     libVersion: this._config.libVersion,
                     chain: this._config.chain,
+                    projectId: this._config.projectId,
                     apiKey: this._config.apiKey,
                     siteMetadata: await buildSiteMetadata(this._config.appMetadata),
                     ...data,
