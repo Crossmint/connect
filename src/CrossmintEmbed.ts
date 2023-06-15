@@ -18,7 +18,7 @@ export default class CrossmintEmbed {
         const { environment, chain, projectId } = this._config;
         const projectIdQueryParam = projectId != null ? `&projectId=${projectId}` : "";
 
-        return `${environment}/frame/2023-06-09?chain=${chain}${projectIdQueryParam}`;
+        return `${environment}/2023-06-09/frame?chain=${chain}${projectIdQueryParam}`;
     }
 
     private constructor(config: CrossmintEmbedConfig) {
