@@ -3,15 +3,15 @@ import { BlockchainTypes } from ".";
 export interface CrossmintEmbedParams {
     /**
      * API key
-     * Get yours at {@link https://console.crossmint.com | Developer Dashboard}
+     * Get yours at {@link https://www.crossmint.com/console/projects/apiKeys | Developer Dashboard}
      */
     apiKey: string;
 
     /**
      * Project ID
      * This will return data from the user's Crossmint account under the Project ID.
-     * Get yours at {@link https://console.crossmint.com | Developer Dashboard}
-     * If you don't have a Project ID, you can exclude this parameter, set it to undefined
+     * Get yours at {@link https://www.crossmint.com/console/projects/apiKeys | Developer Dashboard}
+     * If you don't have a Project ID, you can exclude this parameter or set it to undefined.
      * or set it to "all" to get all wallets from all projects.
      */
     projectId?: string;
