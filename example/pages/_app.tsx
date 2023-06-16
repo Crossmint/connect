@@ -1,13 +1,7 @@
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
-import {
-    GlowWalletAdapter,
-    PhantomWalletAdapter,
-    SlopeWalletAdapter,
-    SolflareWalletAdapter,
-    TorusWalletAdapter,
-} from "@solana/wallet-adapter-wallets";
+import { PhantomWalletAdapter, TorusWalletAdapter } from "@solana/wallet-adapter-wallets";
 import { clusterApiUrl } from "@solana/web3.js";
 import { AppProps } from "next/app";
 import { FC, useMemo } from "react";
