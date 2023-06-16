@@ -5,6 +5,7 @@ import { CROSSMINT_LOGO_21x21, CrossmintWalletName } from "../consts/branding";
 import { BlockchainTypes, CrossmintEmbedConfig, CrossmintEmbedParams, CrossmintEnvironment } from "../types";
 import { buildConfig } from "../utils/config";
 import { CardanoWalletApi } from "./types";
+import { WalletPublicKeyError, WalletWindowClosedError } from "@solana/wallet-adapter-base";
 
 export class CrossmintCardanoWalletAdapter {
     name = CrossmintWalletName;
@@ -33,20 +34,22 @@ export class CrossmintCardanoWalletAdapter {
 
             const client = CrossmintEmbed.init(this._config);
 
-            const account = await client.login();
+            const accounts = await client.login();
 
-            if (account === null) {
-                throw new Error("User rejected the request");
+            if (accounts === null) {
+                throw new WalletWindowClosedError("User rejected the request");
             }
-            if (account === undefined) {
-                throw new Error("User rejected the request or closed the window");
+            if (accounts === undefined || accounts.length === 0) {
+                throw new WalletWindowClosedError("User rejected the request or closed the window");
             }
+
+            const account = accounts[0];
 
             let hexAddress: string;
             try {
                 hexAddress = toHex(C.Address.from_bech32(account).to_bytes());
             } catch (error: any) {
-                throw new Error(error?.message, error);
+                throw new WalletPublicKeyError(error?.message, error);
             }
 
             this._client = client;

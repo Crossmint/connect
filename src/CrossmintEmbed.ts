@@ -1,4 +1,3 @@
-import StorageAdapter from "./adapters/StorageAdapter";
 import WindowAdapter from "./adapters/WindowAdapter";
 import { ALLOWED_ORIGINS } from "./consts/origins";
 import { CrossmintEmbedConfig } from "./types";
@@ -18,7 +17,7 @@ export default class CrossmintEmbed {
         const { environment, chain, projectId } = this._config;
         const projectIdQueryParam = projectId != null ? `&projectId=${projectId}` : "";
 
-        return `${environment}/frame/2023-06-09?chain=${chain}${projectIdQueryParam}`;
+        return `${environment}/2023-06-09/frame?chain=${chain}${projectIdQueryParam}`;
     }
 
     private constructor(config: CrossmintEmbedConfig) {
@@ -33,24 +32,24 @@ export default class CrossmintEmbed {
         return client;
     }
 
-    async login(): Promise<string | undefined | null> {
+    async login(): Promise<string[] | undefined | null> {
         const crossmintWindow = new WindowAdapter();
         crossmintWindow.init({ parentWindow: window, url: this._frameUrl });
 
         if (this._config.autoConnect) {
             const account = await this.getLoginFromIFrame();
 
-            if (account != null) {
+            if (account != null && account.length > 0) {
                 console.log("[crossmint-connect] Received account from auto connect");
                 crossmintWindow.close();
                 return account;
             }
         }
 
-        return await new Promise<string | undefined | null>(async (resolve, reject) => {
+        return await new Promise<string[] | undefined | null>(async (resolve, reject) => {
             console.log("[crossmint-connect] Waiting login");
 
-            let _account: string | undefined | null = undefined;
+            let _accounts: string[] | undefined | null = undefined;
 
             const handleMessage = async (e: MessageEvent<any>) => {
                 if (!ALLOWED_ORIGINS.includes(e.origin)) return;
@@ -59,15 +58,15 @@ export default class CrossmintEmbed {
 
                 switch (request) {
                     case CrossmintEmbedRequestType.REQUEST_ACCOUNTS:
-                        const { account } = data as { account: string };
+                        const { account } = data as { account: string[] };
 
-                        _account = account;
+                        _accounts = account;
                         // await StorageAdapter.storeAccountForChain(_account, this._config.chain);
                         crossmintWindow.controlledWindow?.close();
                         break;
                     case CrossmintEmbedRequestType.USER_REJECT:
                         console.log("[crossmint-connect] User rejected login");
-                        _account = null;
+                        _accounts = null;
                         break;
                     default:
                         break;
@@ -88,7 +87,7 @@ export default class CrossmintEmbed {
             }
 
             window.removeEventListener("message", handleMessage);
-            resolve(_account);
+            resolve(_accounts);
         });
     }
 
@@ -140,6 +139,63 @@ export default class CrossmintEmbed {
         });
     }
 
+    async signMessages(
+        message: Uint8Array,
+        publicKeys: string[]
+    ): Promise<{ [publicKey: string]: Uint8Array } | undefined | null> {
+        const crossmintWindow = new WindowAdapter();
+        crossmintWindow.init({ parentWindow: window, url: this._frameUrl });
+
+        return await new Promise<{ [publicKey: string]: Uint8Array } | undefined | null>(async (resolve, reject) => {
+            console.log("[crossmint-connect] Waiting sign messages");
+
+            let _signedMessages: { [publicKey: string]: Uint8Array } | undefined | null = undefined;
+
+            const handleMessage = async (e: MessageEvent<any>) => {
+                if (!ALLOWED_ORIGINS.includes(e.origin)) return;
+
+                const { request, data } = e.data;
+
+                switch (request) {
+                    case CrossmintEmbedRequestType.SIGN_MESSAGE:
+                        const { signedMessages } = data;
+
+                        _signedMessages = Object.keys(signedMessages).reduce(
+                            (acc, key) => ({
+                                ...acc,
+                                [key]: new Uint8Array(signedMessages[key].split(",").map(Number)),
+                            }),
+                            {}
+                        );
+                        crossmintWindow.controlledWindow?.close();
+                        break;
+                    case CrossmintEmbedRequestType.USER_REJECT:
+                        console.log("[crossmint-connect] User rejected signMessages");
+                        _signedMessages = null;
+                        break;
+                    default:
+                        break;
+                }
+            };
+
+            window.addEventListener("message", handleMessage);
+
+            while (crossmintWindow.open && crossmintWindow.controlledWindow) {
+                await this.postMessage(
+                    crossmintWindow.controlledWindow,
+                    CrossmintEmbedRequestType.SIGN_MESSAGE,
+                    { message, publicKeys },
+                    this._frameUrl
+                );
+
+                await sleep(100);
+            }
+
+            window.removeEventListener("message", handleMessage);
+            resolve(_signedMessages);
+        });
+    }
+
     async cleanUp() {
         // await StorageAdapter.clear();
     }
@@ -169,7 +225,7 @@ export default class CrossmintEmbed {
         );
     }
 
-    private async getLoginFromIFrame(): Promise<string | undefined> {
+    private async getLoginFromIFrame(): Promise<string[] | undefined> {
         console.log("[crossmint] Attempting auto connect");
 
         const loginIframe = htmlToElement<HTMLIFrameElement>(
@@ -182,7 +238,7 @@ export default class CrossmintEmbed {
             ></iframe>`
         );
 
-        return await new Promise<string | undefined>((resolve, reject) => {
+        return await new Promise<string[] | undefined>((resolve, reject) => {
             try {
                 window.document.body.appendChild(loginIframe);
 

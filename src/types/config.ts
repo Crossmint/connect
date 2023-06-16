@@ -12,6 +12,7 @@ export interface CrossmintEmbedParams {
      * This will return data from the user's Crossmint account under the Project ID.
      * Get yours at {@link https://www.crossmint.com/console/projects/apiKeys | Developer Dashboard}
      * If you don't have a Project ID, you can exclude this parameter or set it to undefined.
+     * or set it to "all" to get all wallets from all projects.
      */
     projectId?: string;
 
