@@ -68,14 +68,16 @@ export class CrossmintSolanaWalletAdapter extends BaseMessageSignerWalletAdapter
 
             const client = CrossmintEmbed.init(this._config);
 
-            const account = await client.login();
+            const accounts = await client.login();
 
-            if (account === null) {
+            if (accounts === null) {
                 throw new WalletWindowClosedError("User rejected the request");
             }
-            if (account === undefined) {
-                throw new WalletNotConnectedError("User rejected the request or closed the window");
+            if (accounts === undefined || accounts.length === 0) {
+                throw new WalletWindowClosedError("User rejected the request or closed the window");
             }
+
+            const account = accounts[0];
 
             let publicKey: PublicKey;
             try {

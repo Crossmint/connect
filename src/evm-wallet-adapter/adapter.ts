@@ -1,3 +1,4 @@
+import { WalletPublicKeyError, WalletSignTransactionError, WalletWindowClosedError } from "@solana/wallet-adapter-base";
 import { ethers } from "ethers";
 
 import CrossmintEmbed from "../CrossmintEmbed";
@@ -11,7 +12,7 @@ export class CrossmintEVMWalletAdapter {
     icon = CROSSMINT_LOGO_21x21;
 
     private _connecting: boolean;
-    private _publicKey: string | null;
+    private _publicKeys: string[];
 
     private _config: CrossmintEmbedConfig;
     private _client?: CrossmintEmbed;
@@ -20,13 +21,21 @@ export class CrossmintEVMWalletAdapter {
         params: Omit<CrossmintEmbedParams, "chain"> & { chain: BlockchainTypes.ETHEREUM | BlockchainTypes.POLYGON }
     ) {
         this._connecting = false;
-        this._publicKey = null;
+        this._publicKeys = [];
 
         this._config = buildConfig({ ...params });
     }
 
     get publicKey(): string | null {
-        return this._publicKey;
+        if (this._publicKeys.length == 0) return null;
+
+        return this._publicKeys[0];
+    }
+
+    get publicKeys(): string[] | null {
+        if (this._publicKeys.length == 0) return null;
+
+        return this._publicKeys;
     }
 
     get connecting(): boolean {
@@ -34,7 +43,7 @@ export class CrossmintEVMWalletAdapter {
     }
 
     get connected(): boolean {
-        return this._publicKey !== null && this._publicKey !== undefined;
+        return this._publicKeys.length > 0;
     }
 
     async connect(): Promise<string | undefined> {
@@ -45,26 +54,29 @@ export class CrossmintEVMWalletAdapter {
 
             const client = CrossmintEmbed.init(this._config);
 
-            const account = await client.login();
+            const accounts = await client.login();
 
-            if (account === null) {
-                throw new Error("User rejected the request");
+            if (accounts === null) {
+                throw new WalletWindowClosedError("User rejected the request");
             }
-            if (account === undefined) {
-                throw new Error("User rejected the request or closed the window");
+            if (accounts === undefined || accounts.length === 0) {
+                throw new WalletWindowClosedError("User rejected the request or closed the window");
             }
 
-            let publicKey: string;
-            try {
-                publicKey = ethers.utils.getAddress(account);
-            } catch (error: any) {
-                throw new Error(error?.message, error);
+            const publicKeys: string[] = [];
+            for (const account of accounts) {
+                try {
+                    publicKeys.push(ethers.utils.getAddress(account));
+                } catch (error: any) {
+                    throw new WalletPublicKeyError(error?.message, error);
+                }
             }
 
             this._client = client;
-            this._publicKey = publicKey;
+            this._publicKeys = publicKeys;
 
-            return this._publicKey;
+            // TODO: is this behavior ok?
+            return this._publicKeys[0];
 
             // this.emit("connect", publicKey);
         } catch (error: any) {
@@ -78,7 +90,7 @@ export class CrossmintEVMWalletAdapter {
         this._client?.cleanUp();
 
         this._client = undefined;
-        this._publicKey = null;
+        this._publicKeys = [];
 
         // this.emit("disconnect");
     }
@@ -90,13 +102,37 @@ export class CrossmintEVMWalletAdapter {
             const signedMessage = await this._client.signMessage(new TextEncoder().encode(message));
 
             if (signedMessage === null) {
-                throw new Error("User rejected the request");
+                throw new WalletWindowClosedError("User rejected the request");
             }
             if (signedMessage === undefined) {
-                throw new Error("User rejected the request or closed the window");
+                throw new WalletSignTransactionError("User rejected the request or closed the window");
             }
 
             return new TextDecoder().decode(signedMessage);
+        } catch (error: any) {
+            // this.emit("error", error);
+            throw error;
+        }
+    }
+
+    async signMessageWithAllAddresses(message: string): Promise<{ [publicKey: string]: string }> {
+        try {
+            if (!this._client || !this.connected) throw new Error("Not connected");
+
+            const signedMessages = await this._client.signMessages(new TextEncoder().encode(message), this.publicKeys!);
+            if (signedMessages === null) {
+                throw new WalletWindowClosedError("User rejected the request");
+            }
+            if (signedMessages === undefined) {
+                throw new WalletSignTransactionError("User rejected the request or closed the window");
+            }
+            return Object.keys(signedMessages).reduce(
+                (acc, key) => ({
+                    ...acc,
+                    [key]: new TextDecoder().decode(signedMessages[key]),
+                }),
+                {}
+            );
         } catch (error: any) {
             // this.emit("error", error);
             throw error;
