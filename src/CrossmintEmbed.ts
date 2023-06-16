@@ -1,4 +1,3 @@
-import StorageAdapter from "./adapters/StorageAdapter";
 import WindowAdapter from "./adapters/WindowAdapter";
 import { ALLOWED_ORIGINS } from "./consts/origins";
 import { CrossmintEmbedConfig } from "./types";
@@ -92,7 +91,7 @@ export default class CrossmintEmbed {
         });
     }
 
-    async signMessage(message: Uint8Array, publicKey?: string): Promise<Uint8Array | undefined | null> {
+    async signMessage(message: Uint8Array): Promise<Uint8Array | undefined | null> {
         const crossmintWindow = new WindowAdapter();
         crossmintWindow.init({ parentWindow: window, url: this._frameUrl });
 
@@ -128,7 +127,7 @@ export default class CrossmintEmbed {
                 await this.postMessage(
                     crossmintWindow.controlledWindow,
                     CrossmintEmbedRequestType.SIGN_MESSAGE,
-                    { message, publicKey },
+                    { message },
                     this._frameUrl
                 );
 
@@ -137,6 +136,63 @@ export default class CrossmintEmbed {
 
             window.removeEventListener("message", handleMessage);
             resolve(_signedMessage);
+        });
+    }
+
+    async signMessages(
+        message: Uint8Array,
+        publicKeys: string[]
+    ): Promise<{ [publicKey: string]: Uint8Array } | undefined | null> {
+        const crossmintWindow = new WindowAdapter();
+        crossmintWindow.init({ parentWindow: window, url: this._frameUrl });
+
+        return await new Promise<{ [publicKey: string]: Uint8Array } | undefined | null>(async (resolve, reject) => {
+            console.log("[crossmint-connect] Waiting sign messages");
+
+            let _signedMessages: { [publicKey: string]: Uint8Array } | undefined | null = undefined;
+
+            const handleMessage = async (e: MessageEvent<any>) => {
+                if (!ALLOWED_ORIGINS.includes(e.origin)) return;
+
+                const { request, data } = e.data;
+
+                switch (request) {
+                    case CrossmintEmbedRequestType.SIGN_MESSAGE:
+                        const { signedMessages } = data;
+
+                        _signedMessages = Object.keys(signedMessages).reduce(
+                            (acc, key) => ({
+                                ...acc,
+                                [key]: new Uint8Array(signedMessages[key].split(",").map(Number)),
+                            }),
+                            {}
+                        );
+                        crossmintWindow.controlledWindow?.close();
+                        break;
+                    case CrossmintEmbedRequestType.USER_REJECT:
+                        console.log("[crossmint-connect] User rejected signMessages");
+                        _signedMessages = null;
+                        break;
+                    default:
+                        break;
+                }
+            };
+
+            window.addEventListener("message", handleMessage);
+
+            while (crossmintWindow.open && crossmintWindow.controlledWindow) {
+                await this.postMessage(
+                    crossmintWindow.controlledWindow,
+                    CrossmintEmbedRequestType.SIGN_MESSAGE,
+                    { message, publicKeys },
+                    this._frameUrl
+                );
+
+                await sleep(100);
+            }
+
+            window.removeEventListener("message", handleMessage);
+            resolve(_signedMessages);
         });
     }
 
