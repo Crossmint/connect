@@ -1,15 +1,6 @@
 {
-    "name": "example",
-    "version": "0.1.0",
-    "private": true,
-    "scripts": {
-        "dev": "next dev",
-        "build": "next build",
-        "start": "next start",
-        "lint": "next lint"
-    },
     "dependencies": {
-        "@crossmint/connect": "0.0.9-alpha.2",
+        "@crossmint/connect": "0.0.9-alpha.4",
         "@solana/wallet-adapter-base": "^0.9.7",
         "@solana/wallet-adapter-react": "^0.15.6",
         "@solana/wallet-adapter-react-ui": "^0.9.8",
@@ -28,5 +19,14 @@
         "eslint": "8.19.0",
         "eslint-config-next": "12.2.2",
         "typescript": "4.7.4"
-    }
+    },
+    "name": "example",
+    "private": true,
+    "scripts": {
+        "build": "next build",
+        "dev": "next dev",
+        "lint": "next lint",
+        "start": "next start"
+    },
+    "version": "0.1.0"
 }
