@@ -20,7 +20,6 @@ export interface CrossmintEmbedBaseRequest<CrossmintEmbedBaseRequestDataType> {
 export interface CrossmintEmbedBaseRequestData {
     libVersion: string;
     chain: BlockchainTypes;
-    apiKey: string;
     siteMetadata: SiteMetadata;
 }
 

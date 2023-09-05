@@ -2,12 +2,6 @@ import { BlockchainTypes } from ".";
 
 export interface CrossmintEmbedParams {
     /**
-     * API key
-     * Get yours at {@link https://www.crossmint.com/console/projects/apiKeys | Developer Dashboard}
-     */
-    apiKey: string;
-
-    /**
      * Project ID
      * This will return data from the user's Crossmint account under the Project ID.
      * Get yours at {@link https://www.crossmint.com/console/projects/apiKeys | Developer Dashboard}
@@ -38,7 +32,6 @@ export interface AppMetadata {
 export interface CrossmintEmbedConfig {
     libVersion: string;
 
-    apiKey: string;
     projectId?: string;
 
     chain: BlockchainTypes;
