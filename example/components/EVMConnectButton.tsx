@@ -8,7 +8,6 @@ export default function EVMConnectButton() {
     async function connectToCrossmint() {
         // Initialize the Crossmint embed.
         const _crossmintEmbed = new CrossmintEVMWalletAdapter({
-            apiKey: "<YOUR_API_KEY>",
             chain: BlockchainTypes.ETHEREUM, // BlockchainTypes.ETHEREUM || BlockchainTypes.POLYGON. For solana use BlockchainTypes.SOLANA
         });
 

@@ -6,9 +6,7 @@ export default function CardanoConnectButton() {
     const [hexAddress, setAddress] = useState<string | undefined>(undefined);
 
     // Initialize the Crossmint connect.
-    const crossmintConnect = new CrossmintCardanoWalletAdapter({
-        apiKey: "<YOUR_API_KEY>",
-    });
+    const crossmintConnect = new CrossmintCardanoWalletAdapter({});
 
     async function connectToCrossmint() {
         // Ask the user to sign in and give access to their address

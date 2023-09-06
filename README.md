@@ -95,9 +95,7 @@ The `CrossmintSolanaWalletAdapter` is fully compatible with [@solana/wallet-adap
 
         const wallets = useMemo(
             () => [
-                new CrossmintSolanaWalletAdapter({
-    				apiKey: "" // Parameter deprecated, do not put any API key / secret here. Leave blank with ""
-                })
+                new CrossmintSolanaWalletAdapter({})
             ],
             []
         );
@@ -132,7 +130,6 @@ The following is an example of connecting to a user's Crossmint Ethereum account
       async function connectToCrossmint() {
         // Initialize the Crossmint connect.
         const _crossmintConnect = new CrossmintEVMWalletAdapter({
-          apiKey: "", // Parameter deprecated, do not put any API key / secret here. Leave blank with ""
           chain: BlockchainTypes.ETHEREUM, // BlockchainTypes.ETHEREUM || BlockchainTypes.POLYGON. For solana use BlockchainTypes.SOLANA
         });
 
