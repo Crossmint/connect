@@ -205,7 +205,7 @@ export default class CrossmintEmbed {
         request: CrossmintEmbedRequestType,
         data?: Omit<
             CrossmintEmbedSignMessageData | CrossmintEmbedRequestAccountData,
-            "libVersion" | "chain" | "apiKey" | "siteMetadata"
+            "libVersion" | "chain" | "siteMetadata"
         >,
         targetOrigin: string = "*"
     ) {
@@ -216,7 +216,6 @@ export default class CrossmintEmbed {
                     libVersion: this._config.libVersion,
                     chain: this._config.chain,
                     projectId: this._config.projectId,
-                    apiKey: this._config.apiKey,
                     siteMetadata: await buildSiteMetadata(this._config.appMetadata),
                     ...data,
                 },

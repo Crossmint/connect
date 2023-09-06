@@ -4,7 +4,6 @@ import { CrossmintEmbedConfig, CrossmintEmbedParams, CrossmintEnvironment } from
 export function buildConfig(params: CrossmintEmbedParams): CrossmintEmbedConfig {
     const ret: CrossmintEmbedConfig = {
         libVersion: LIB_VERSION,
-        apiKey: params.apiKey,
         projectId: params.projectId,
         environment: params.environment || CrossmintEnvironment.PROD,
         autoConnect: params.autoConnect ?? true,
