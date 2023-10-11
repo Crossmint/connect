@@ -10,6 +10,7 @@ export function buildConfig(params: CrossmintEmbedParams): CrossmintEmbedConfig 
         maxTimeAutoConnectMs: params.maxTimeAutoConnectMs || 300,
         appMetadata: params.appMetadata,
         chain: params.chain,
+        forceWalletSelection: params.forceWalletSelection,
     };
 
     return ret;
