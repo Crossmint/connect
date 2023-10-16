@@ -9,6 +9,7 @@ export interface CrossmintEmbedParams {
      * or set it to "all" to get all wallets from all projects.
      */
     projectId?: string;
+    forceWalletSelection?: boolean;
 
     chain: BlockchainTypes;
 
@@ -33,6 +34,7 @@ export interface CrossmintEmbedConfig {
     libVersion: string;
 
     projectId?: string;
+    forceWalletSelection?: boolean;
 
     chain: BlockchainTypes;
 
