@@ -37,9 +37,6 @@ export interface EVMAAWalletProjection extends WalletProjection {
     deviceId: string;
 }
 
-// TODO:
-// - There are some places where account is a string[] and others where account is string. We need
-//   to make it consistent accross files
 type LoginData = {
     accounts?: (WalletProjection | EVMAAWalletProjection)[];
 }
