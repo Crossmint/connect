@@ -1,7 +1,7 @@
 import { WalletPublicKeyError, WalletSignTransactionError, WalletWindowClosedError } from "@solana/wallet-adapter-base";
 import { ethers } from "ethers";
 
-import CrossmintEmbed from "../CrossmintEmbed";
+import CrossmintEmbed, { EVMAAWalletProjection, WalletProjection } from "../CrossmintEmbed";
 import { CROSSMINT_LOGO_21x21, CrossmintWalletName } from "../consts/branding";
 import { BlockchainTypes, CrossmintEmbedConfig, CrossmintEmbedParams } from "../types";
 import { buildConfig } from "../utils/config";
@@ -12,38 +12,34 @@ export class CrossmintEVMWalletAdapter {
     icon = CROSSMINT_LOGO_21x21;
 
     private _connecting: boolean;
-    private _publicKeys: string[];
 
     private _config: CrossmintEmbedConfig;
     private _client?: CrossmintEmbed;
+
+    private _accounts?: (WalletProjection | EVMAAWalletProjection)[]
 
     constructor(
         params: Omit<CrossmintEmbedParams, "chain"> & { chain: BlockchainTypes.ETHEREUM | BlockchainTypes.POLYGON }
     ) {
         this._connecting = false;
-        this._publicKeys = [];
 
         this._config = buildConfig({ ...params });
     }
 
-    get publicKey(): string | null {
-        if (this._publicKeys.length == 0) return null;
-
-        return this._publicKeys[0];
+    get publicKey() {
+        return this._accounts?.[0].address;
     }
 
-    get publicKeys(): string[] | null {
-        if (this._publicKeys.length == 0) return null;
-
-        return this._publicKeys;
+    get publicKeys() {
+        return this._accounts?.map(({ address }) => address);
     }
 
-    get connecting(): boolean {
+    get connecting() {
         return this._connecting;
     }
 
-    get connected(): boolean {
-        return this._publicKeys.length > 0;
+    get connected() {
+        return this._accounts?.[0] != null
     }
 
     async connect(): Promise<string | undefined> {
@@ -54,29 +50,21 @@ export class CrossmintEVMWalletAdapter {
 
             const client = CrossmintEmbed.init(this._config);
 
-            const accounts = await client.login();
-
-            if (accounts === null) {
-                throw new WalletWindowClosedError("User rejected the request");
-            }
-            if (accounts === undefined || accounts.length === 0) {
+            const loginData = await client.login();
+            if (loginData?.accounts?.[0] == null) {
                 throw new WalletWindowClosedError("User rejected the request or closed the window");
             }
 
-            const publicKeys: string[] = [];
-            for (const account of accounts) {
-                try {
-                    publicKeys.push(ethers.utils.getAddress(account));
-                } catch (error: any) {
-                    throw new WalletPublicKeyError(error?.message, error);
-                }
-            }
+            const { accounts } = loginData
+
 
             this._client = client;
-            this._publicKeys = publicKeys;
 
-            // TODO: is this behavior ok?
-            return this._publicKeys[0];
+
+            this._accounts = accounts
+
+            //In Crossbit we sort it by recommended
+            return this._accounts[0].address;
 
             // this.emit("connect", publicKey);
         } catch (error: any) {
@@ -89,17 +77,22 @@ export class CrossmintEVMWalletAdapter {
     async disconnect(): Promise<void> {
         this._client?.cleanUp();
 
-        this._client = undefined;
-        this._publicKeys = [];
-
+        delete this._client
+        delete this._accounts
         // this.emit("disconnect");
     }
 
     async signMessage(message: string): Promise<string> {
         try {
-            if (!this._client || !this.connected) throw new Error("Not connected");
+            if (!this._client || !this.connected || this._accounts == null) throw new Error("Not connected");
 
-            const signedMessage = await this._client.signMessage(new TextEncoder().encode(message));
+            let signedMessage
+            const account = this._accounts[0]
+            if (isAAWallet(account)) {
+                signedMessage = await this._client.signMessage(new TextEncoder().encode(message), account.walletId, account.deviceId);
+            } else {
+                signedMessage = await this._client.signMessage(new TextEncoder().encode(message));
+            }
 
             if (signedMessage === null) {
                 throw new WalletWindowClosedError("User rejected the request");
@@ -108,18 +101,23 @@ export class CrossmintEVMWalletAdapter {
                 throw new WalletSignTransactionError("User rejected the request or closed the window");
             }
 
-            return new TextDecoder().decode(signedMessage);
+            return isAAWallet(account) ? signedMessage as string : new TextDecoder().decode(signedMessage as Uint8Array);
         } catch (error: any) {
             // this.emit("error", error);
             throw error;
         }
     }
 
+    // Q from Matias: Does this work?
     async signMessageWithAllAddresses(message: string): Promise<{ [publicKey: string]: string }> {
         try {
             if (!this._client || !this.connected) throw new Error("Not connected");
 
-            const signedMessages = await this._client.signMessages(new TextEncoder().encode(message), this.publicKeys!);
+            if (this.publicKey == null) {
+                throw new Error('Please, connect the wallet first')
+            }
+
+            const signedMessages = await this._client.signMessages(new TextEncoder().encode(message), [this.publicKey]);
             if (signedMessages === null) {
                 throw new WalletWindowClosedError("User rejected the request");
             }
@@ -138,4 +136,8 @@ export class CrossmintEVMWalletAdapter {
             throw error;
         }
     }
+}
+
+function isAAWallet(wallet: WalletProjection | EVMAAWalletProjection): wallet is EVMAAWalletProjection {
+    return wallet != null && "isAA" in wallet && wallet.isAA;
 }
