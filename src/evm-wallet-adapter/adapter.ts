@@ -51,6 +51,7 @@ export class CrossmintEVMWalletAdapter {
             const client = CrossmintEmbed.init(this._config);
 
             const loginData = await client.login();
+            console.log(loginData)
             if (loginData?.accounts?.[0] == null) {
                 throw new WalletWindowClosedError("User rejected the request or closed the window");
             }
@@ -113,11 +114,11 @@ export class CrossmintEVMWalletAdapter {
         try {
             if (!this._client || !this.connected) throw new Error("Not connected");
 
-            if (this.publicKey == null) {
+            if (this.publicKeys == null) {
                 throw new Error('Please, connect the wallet first')
             }
 
-            const signedMessages = await this._client.signMessages(new TextEncoder().encode(message), [this.publicKey]);
+            const signedMessages = await this._client.signMessages(new TextEncoder().encode(message), this.publicKeys);
             if (signedMessages === null) {
                 throw new WalletWindowClosedError("User rejected the request");
             }

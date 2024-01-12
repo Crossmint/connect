@@ -41,11 +41,11 @@ export class CrossmintCardanoWalletAdapter {
             }
 
             //TODO: walletId and deviceId should be implemented when AA supports Cardano
-            const accounts = loginData.accounts[0]
+            const account = loginData.accounts[0]
 
             let hexAddress: string;
             try {
-                hexAddress = toHex(C.Address.from_bech32(accounts.address).to_bytes());
+                hexAddress = toHex(C.Address.from_bech32(account.address).to_bytes());
             } catch (error: any) {
                 throw new WalletPublicKeyError(error?.message, error);
             }

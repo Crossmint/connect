@@ -173,8 +173,7 @@ export default class CrossmintEmbed {
         });
     }
 
-    // When an AA is selected, just that wallet can be connected.
-    // So, we don't need to adapt signMessages to support AA wallets
+    /// Does not support AA signatures because currently, if an AA wallet is connected, we only allow one wallet  
     async signMessages(
         message: Uint8Array,
         publicKeys: string[]
