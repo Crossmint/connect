@@ -90,9 +90,9 @@ export class CrossmintEVMWalletAdapter {
             let signedMessage
             const account = this._accounts[0]
             if (isAAWallet(account)) {
-                signedMessage = await this._client.signMessage(new TextEncoder().encode(message), account.walletId, account.deviceId);
+                signedMessage = await this._client.signMessage<string>(new TextEncoder().encode(message), account.walletId, account.deviceId);
             } else {
-                signedMessage = await this._client.signMessage(new TextEncoder().encode(message));
+                signedMessage = await this._client.signMessage<Uint8Array>(new TextEncoder().encode(message));
             }
 
             if (signedMessage === null) {

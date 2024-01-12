@@ -121,12 +121,11 @@ export default class CrossmintEmbed {
         });
     }
 
-    signMessage<T>(message: Uint8Array, walletId?: string, deviceId?: string): Promise<T>
-    async signMessage(message: Uint8Array, walletId?: string, deviceId?: string) {
+    async signMessage<T>(message: Uint8Array, walletId?: string, deviceId?: string) {
         const crossmintWindow = new WindowAdapter();
         crossmintWindow.init({ parentWindow: window, url: this._frameUrl });
 
-        return await new Promise<Uint8Array | string | undefined | null>(async (resolve, reject) => {
+        return await new Promise<T | undefined | null>(async (resolve, reject) => {
             console.log("[crossmint-connect] Waiting sign message");
 
             let _signedMessage: Uint8Array | undefined | null = undefined;
