@@ -1,7 +1,7 @@
-import EVMConnectButton from "../components/EVMConnectButton"
+import EVMConnectButton from "../components/EVMConnectButton";
 
 const EVMConnectButtonPage = () => {
-  return <EVMConnectButton />
-}
+    return <EVMConnectButton />;
+};
 
-export default EVMConnectButtonPage
+export default EVMConnectButtonPage;

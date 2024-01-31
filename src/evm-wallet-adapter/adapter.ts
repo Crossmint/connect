@@ -2,7 +2,7 @@ import { WalletSignTransactionError, WalletWindowClosedError } from "@solana/wal
 
 import CrossmintEmbed, { EVMAAWalletProjection, WalletProjection } from "../CrossmintEmbed";
 import { CROSSMINT_LOGO_21x21, CrossmintWalletName } from "../consts/branding";
-import { BlockchainTypes, CrossmintEmbedConfig, CrossmintEmbedParams } from "../types";
+import { BlockchainTypes, CrossmintEmbedConfig, CrossmintEmbedParams, TransactionRequest } from "../types";
 import { buildConfig } from "../utils/config";
 
 export class CrossmintEVMWalletAdapter {
@@ -50,7 +50,6 @@ export class CrossmintEVMWalletAdapter {
             const client = CrossmintEmbed.init(this._config);
 
             const loginData = await client.login();
-            console.log(loginData);
             if (loginData?.accounts?.[0] == null) {
                 throw new WalletWindowClosedError("User rejected the request or closed the window");
             }
@@ -89,7 +88,6 @@ export class CrossmintEVMWalletAdapter {
             if (isAAWallet(account)) {
                 signedMessage = await this._client.signMessage<string>(
                     new TextEncoder().encode(message),
-                    account.address,
                     account.walletId,
                     account.deviceId
                 );
@@ -138,6 +136,30 @@ export class CrossmintEVMWalletAdapter {
             );
         } catch (error: any) {
             // this.emit("error", error);
+            throw error;
+        }
+    }
+
+    async sendTransaction(tx: TransactionRequest): Promise<string> {
+        try {
+            if (!this._client || !this.connected || this._accounts == null) throw new Error("Not connected");
+
+            let txHash
+            const account = this._accounts[0]
+            if (isAAWallet(account)) {
+                txHash = await this._client.sendTransaction<TransactionRequest>(tx, account.walletId, account.deviceId);
+            } else {
+                txHash = await this._client.sendTransaction<Uint8Array>(tx);
+            }
+
+            if (txHash === null) {
+                throw new WalletWindowClosedError("User rejected the request");
+            }
+            if (txHash === undefined) {
+                throw new WalletSignTransactionError("User rejected the request or closed the window");
+            }
+            return isAAWallet(account) ? txHash as string : "";
+        } catch (error: any) {
             throw error;
         }
     }

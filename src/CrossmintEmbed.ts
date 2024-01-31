@@ -1,6 +1,6 @@
 import WindowAdapter from "./adapters/WindowAdapter";
 import { ALLOWED_ORIGINS } from "./consts/origins";
-import { CrossmintEmbedConfig } from "./types";
+import { CrossmintEmbedConfig, TransactionRequest } from "./types";
 import {
     CrossmintEmbedRequestAccountData,
     CrossmintEmbedRequestType,
@@ -86,7 +86,6 @@ export default class CrossmintEmbed {
 
             const handleMessage = async (e: MessageEvent<any>) => {
                 if (!ALLOWED_ORIGINS.includes(e.origin)) return;
-
                 const { request, data } = e.data;
 
                 switch (request) {
@@ -228,6 +227,52 @@ export default class CrossmintEmbed {
 
             window.removeEventListener("message", handleMessage);
             resolve(_signedMessages);
+        });
+    }
+
+    async sendTransaction<T>(tx: TransactionRequest, walletId?: string, deviceId?: string) {
+        const crossmintWindow = new WindowAdapter();
+        crossmintWindow.init({ parentWindow: window, url: this._frameUrl });
+
+        return await new Promise<T | undefined | null>(async (resolve, reject) => {
+            console.log("[crossmint-connect] Waiting Send Transaction");
+
+            let _txHash: string | undefined | null = undefined;
+
+            const handleMessage = async (e: MessageEvent<any>) => {
+                if (!ALLOWED_ORIGINS.includes(e.origin)) return;
+
+                const { request, data } = e.data;
+
+                switch (request) {
+                    case CrossmintEmbedRequestType.SEND_TRANSACTION:
+                        const { txHash } = data;
+                        _txHash = txHash;
+                        crossmintWindow.controlledWindow?.close();
+                        break;
+                    case CrossmintEmbedRequestType.USER_REJECT:
+                        console.log("[crossmint-connect] User rejected signMessage");
+                        break;
+                    default:
+                        break;
+                }
+            };
+
+            window.addEventListener("message", handleMessage);
+
+            while (crossmintWindow.open && crossmintWindow.controlledWindow) {
+                await this.postMessage(
+                    crossmintWindow.controlledWindow,
+                    CrossmintEmbedRequestType.SEND_TRANSACTION,
+                    { tx, walletId, deviceId },
+                    this._frameUrl
+                );
+
+                await sleep(100);
+            }
+
+            window.removeEventListener("message", handleMessage);
+            resolve(_txHash);
         });
     }
 
