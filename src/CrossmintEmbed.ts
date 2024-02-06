@@ -22,7 +22,7 @@ export const EVM_CHAINS = [
     "arbitrumnova",
     "zkatana",
 ] as const;
-export type EVMChain = (typeof EVM_CHAINS)[number];
+export type EVMChain = typeof EVM_CHAINS[number];
 
 export interface WalletProjection {
     chain: EVMChain;
@@ -39,7 +39,7 @@ export interface EVMAAWalletProjection extends WalletProjection {
 
 type LoginData = {
     accounts?: (WalletProjection | EVMAAWalletProjection)[];
-}
+};
 
 export default class CrossmintEmbed {
     private _config: CrossmintEmbedConfig;
@@ -47,9 +47,11 @@ export default class CrossmintEmbed {
     private get _frameUrl() {
         const { environment, chain, projectId, forceWalletSelection } = this._config;
         const projectIdQueryParam = projectId != null ? `&projectId=${projectId}` : "";
-        const forceWalletSelectionQueryParam = forceWalletSelection != null ? `&forceWalletSelection=${forceWalletSelection}` : "";
+        const forceWalletSelectionQueryParam =
+            forceWalletSelection != null ? `&forceWalletSelection=${forceWalletSelection}` : "";
+        const showAAWalletsParam = `&showAAWallets=true`;
 
-        return `${environment}/2023-06-09/frame?chain=${chain}${projectIdQueryParam}${forceWalletSelectionQueryParam}`;
+        return `${environment}/2023-06-09/frame?chain=${chain}${projectIdQueryParam}${forceWalletSelectionQueryParam}${showAAWalletsParam}`;
     }
 
     private constructor(config: CrossmintEmbedConfig) {
@@ -80,8 +82,7 @@ export default class CrossmintEmbed {
 
         return await new Promise<LoginData | null>(async (resolve, reject) => {
             console.log("[crossmint-connect] Waiting login");
-            let loginData: LoginData | null = null
-
+            let loginData: LoginData | null = null;
 
             const handleMessage = async (e: MessageEvent<any>) => {
                 if (!ALLOWED_ORIGINS.includes(e.origin)) return;
@@ -90,13 +91,13 @@ export default class CrossmintEmbed {
 
                 switch (request) {
                     case CrossmintEmbedRequestType.REQUEST_ACCOUNTS:
-                        loginData = data as LoginData
+                        loginData = data as LoginData;
                         // await StorageAdapter.storeAccountForChain(_account, this._config.chain);
                         crossmintWindow.controlledWindow?.close();
                         break;
                     case CrossmintEmbedRequestType.USER_REJECT:
                         console.log("[crossmint-connect] User rejected login");
-                        loginData = null
+                        loginData = null;
                         break;
                     default:
                         break;
@@ -139,7 +140,7 @@ export default class CrossmintEmbed {
                     case CrossmintEmbedRequestType.SIGN_MESSAGE:
                         const { signedMessage } = data;
                         if (walletId && deviceId) {
-                            _signedMessage = signedMessage
+                            _signedMessage = signedMessage;
                         } else {
                             _signedMessage = new Uint8Array(signedMessage.split(",").map(Number));
                         }
@@ -172,7 +173,7 @@ export default class CrossmintEmbed {
         });
     }
 
-    /// Does not support AA signatures because currently, if an AA wallet is connected, we only allow one wallet  
+    /// Does not support AA signatures because currently, if an AA wallet is connected, we only allow one wallet
     async signMessages(
         message: Uint8Array,
         publicKeys: string[]
