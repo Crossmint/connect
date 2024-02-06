@@ -10,15 +10,48 @@ import { htmlToElement } from "./utils/iframe";
 import buildSiteMetadata from "./utils/siteMetadata";
 import { sleep } from "./utils/sleep";
 
+export const EVM_CHAINS = [
+    "ethereum",
+    "ethereum-sepolia",
+    "polygon",
+    "bsc",
+    "optimism",
+    "arbitrum",
+    "base",
+    "zora",
+    "arbitrumnova",
+    "zkatana",
+] as const;
+export type EVMChain = typeof EVM_CHAINS[number];
+
+export interface WalletProjection {
+    chain: EVMChain;
+    address: string;
+    locator: string;
+    label?: string;
+}
+
+export interface EVMAAWalletProjection extends WalletProjection {
+    isAA: true;
+    walletId: string;
+    deviceId: string;
+}
+
+type LoginData = {
+    accounts?: (WalletProjection | EVMAAWalletProjection)[];
+};
+
 export default class CrossmintEmbed {
     private _config: CrossmintEmbedConfig;
 
     private get _frameUrl() {
         const { environment, chain, projectId, forceWalletSelection } = this._config;
         const projectIdQueryParam = projectId != null ? `&projectId=${projectId}` : "";
-        const forceWalletSelectionQueryParam = forceWalletSelection != null ? `&forceWalletSelection=${forceWalletSelection}` : "";
+        const forceWalletSelectionQueryParam =
+            forceWalletSelection != null ? `&forceWalletSelection=${forceWalletSelection}` : "";
+        const showAAWalletsParam = `&showAAWallets=true`;
 
-        return `${environment}/2023-06-09/frame?chain=${chain}${projectIdQueryParam}${forceWalletSelectionQueryParam}`;
+        return `${environment}/2023-06-09/frame?chain=${chain}${projectIdQueryParam}${forceWalletSelectionQueryParam}${showAAWalletsParam}`;
     }
 
     private constructor(config: CrossmintEmbedConfig) {
@@ -33,24 +66,23 @@ export default class CrossmintEmbed {
         return client;
     }
 
-    async login(): Promise<string[] | undefined | null> {
+    async login() {
         const crossmintWindow = new WindowAdapter();
         crossmintWindow.init({ parentWindow: window, url: this._frameUrl });
 
         if (this._config.autoConnect) {
-            const account = await this.getLoginFromIFrame();
+            const loginData = await this.getLoginFromIFrame();
 
-            if (account != null && account.length > 0) {
+            if (loginData?.accounts?.[0] != null) {
                 console.log("[crossmint-connect] Received account from auto connect");
                 crossmintWindow.close();
-                return account;
+                return loginData;
             }
         }
 
-        return await new Promise<string[] | undefined | null>(async (resolve, reject) => {
+        return await new Promise<LoginData | null>(async (resolve, reject) => {
             console.log("[crossmint-connect] Waiting login");
-
-            let _accounts: string[] | undefined | null = undefined;
+            let loginData: LoginData | null = null;
 
             const handleMessage = async (e: MessageEvent<any>) => {
                 if (!ALLOWED_ORIGINS.includes(e.origin)) return;
@@ -59,15 +91,13 @@ export default class CrossmintEmbed {
 
                 switch (request) {
                     case CrossmintEmbedRequestType.REQUEST_ACCOUNTS:
-                        const { account } = data as { account: string[] };
-
-                        _accounts = account;
+                        loginData = data as LoginData;
                         // await StorageAdapter.storeAccountForChain(_account, this._config.chain);
                         crossmintWindow.controlledWindow?.close();
                         break;
                     case CrossmintEmbedRequestType.USER_REJECT:
                         console.log("[crossmint-connect] User rejected login");
-                        _accounts = null;
+                        loginData = null;
                         break;
                     default:
                         break;
@@ -88,15 +118,15 @@ export default class CrossmintEmbed {
             }
 
             window.removeEventListener("message", handleMessage);
-            resolve(_accounts);
+            resolve(loginData);
         });
     }
 
-    async signMessage(message: Uint8Array): Promise<Uint8Array | undefined | null> {
+    async signMessage<T>(message: Uint8Array, walletId?: string, deviceId?: string) {
         const crossmintWindow = new WindowAdapter();
         crossmintWindow.init({ parentWindow: window, url: this._frameUrl });
 
-        return await new Promise<Uint8Array | undefined | null>(async (resolve, reject) => {
+        return await new Promise<T | undefined | null>(async (resolve, reject) => {
             console.log("[crossmint-connect] Waiting sign message");
 
             let _signedMessage: Uint8Array | undefined | null = undefined;
@@ -109,8 +139,11 @@ export default class CrossmintEmbed {
                 switch (request) {
                     case CrossmintEmbedRequestType.SIGN_MESSAGE:
                         const { signedMessage } = data;
-
-                        _signedMessage = new Uint8Array(signedMessage.split(",").map(Number));
+                        if (walletId && deviceId) {
+                            _signedMessage = signedMessage;
+                        } else {
+                            _signedMessage = new Uint8Array(signedMessage.split(",").map(Number));
+                        }
                         crossmintWindow.controlledWindow?.close();
                         break;
                     case CrossmintEmbedRequestType.USER_REJECT:
@@ -128,7 +161,7 @@ export default class CrossmintEmbed {
                 await this.postMessage(
                     crossmintWindow.controlledWindow,
                     CrossmintEmbedRequestType.SIGN_MESSAGE,
-                    { message },
+                    { message, walletId, deviceId },
                     this._frameUrl
                 );
 
@@ -140,6 +173,7 @@ export default class CrossmintEmbed {
         });
     }
 
+    /// Does not support AA signatures because currently, if an AA wallet is connected, we only allow one wallet
     async signMessages(
         message: Uint8Array,
         publicKeys: string[]
@@ -225,7 +259,7 @@ export default class CrossmintEmbed {
         );
     }
 
-    private async getLoginFromIFrame(): Promise<string[] | undefined> {
+    private async getLoginFromIFrame() {
         console.log("[crossmint] Attempting auto connect");
 
         const loginIframe = htmlToElement<HTMLIFrameElement>(
@@ -238,7 +272,7 @@ export default class CrossmintEmbed {
             ></iframe>`
         );
 
-        return await new Promise<string[] | undefined>((resolve, reject) => {
+        return await new Promise<LoginData | null>((resolve, reject) => {
             try {
                 window.document.body.appendChild(loginIframe);
 
@@ -252,7 +286,7 @@ export default class CrossmintEmbed {
                         window.removeEventListener("message", handleMessage);
                         window.document.body.removeChild(loginIframe);
 
-                        resolve(undefined);
+                        resolve(null);
                     }, this._config.maxTimeAutoConnectMs);
 
                     const handleMessage = async (e: MessageEvent<any>) => {
@@ -262,10 +296,10 @@ export default class CrossmintEmbed {
 
                         switch (request) {
                             case CrossmintEmbedRequestType.REQUEST_ACCOUNTS:
-                                const { account } = data;
+                                const loginData = data as LoginData;
 
                                 clearTimeout(timeout);
-                                resolve(account);
+                                resolve(loginData);
                                 break;
                             default:
                                 break;
@@ -283,7 +317,7 @@ export default class CrossmintEmbed {
                 });
             } catch (e) {
                 console.log(e);
-                resolve(undefined);
+                resolve(null);
             }
         });
     }

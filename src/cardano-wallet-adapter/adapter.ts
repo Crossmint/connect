@@ -34,20 +34,18 @@ export class CrossmintCardanoWalletAdapter {
 
             const client = CrossmintEmbed.init(this._config);
 
-            const accounts = await client.login();
+            const loginData = await client.login();
 
-            if (accounts === null) {
-                throw new WalletWindowClosedError("User rejected the request");
-            }
-            if (accounts === undefined || accounts.length === 0) {
+            if (loginData?.accounts?.[0] == null) {
                 throw new WalletWindowClosedError("User rejected the request or closed the window");
             }
 
-            const account = accounts[0];
+            //TODO: walletId and deviceId should be implemented when AA supports Cardano
+            const account = loginData.accounts[0]
 
             let hexAddress: string;
             try {
-                hexAddress = toHex(C.Address.from_bech32(account).to_bytes());
+                hexAddress = toHex(C.Address.from_bech32(account.address).to_bytes());
             } catch (error: any) {
                 throw new WalletPublicKeyError(error?.message, error);
             }

@@ -52,8 +52,8 @@ export class CrossmintSolanaWalletAdapter extends BaseMessageSignerWalletAdapter
         return typeof window === "undefined"
             ? WalletReadyState.Unsupported
             : this._forceInstalled
-            ? WalletReadyState.Installed
-            : WalletReadyState.Loadable;
+                ? WalletReadyState.Installed
+                : WalletReadyState.Loadable;
     }
 
     async connect(): Promise<void> {
@@ -68,20 +68,18 @@ export class CrossmintSolanaWalletAdapter extends BaseMessageSignerWalletAdapter
 
             const client = CrossmintEmbed.init(this._config);
 
-            const accounts = await client.login();
+            const loginData = await client.login();
 
-            if (accounts === null) {
-                throw new WalletWindowClosedError("User rejected the request");
-            }
-            if (accounts === undefined || accounts.length === 0) {
+            if (loginData?.accounts?.[0] == null) {
                 throw new WalletWindowClosedError("User rejected the request or closed the window");
             }
 
-            const account = accounts[0];
+            // TODO: walletId and deviceId should be implemented when AA supports Solana
+            const { accounts } = loginData
 
             let publicKey: PublicKey;
             try {
-                publicKey = new PublicKey(account);
+                publicKey = new PublicKey(accounts[0].address);
             } catch (error: any) {
                 throw new WalletPublicKeyError(error?.message, error);
             }
@@ -115,11 +113,11 @@ export class CrossmintSolanaWalletAdapter extends BaseMessageSignerWalletAdapter
         throw new WalletSignTransactionError("Not implemented");
     }
 
-    async signMessage(message: Uint8Array): Promise<Uint8Array> {
+    async signMessage(message: Uint8Array) {
         try {
             if (!this._client || !this.connected) throw new WalletNotConnectedError();
 
-            const signedMessage = await this._client.signMessage(message);
+            const signedMessage = await this._client.signMessage<Uint8Array>(message);
 
             if (signedMessage === null) {
                 throw new WalletWindowClosedError("User rejected the request");
