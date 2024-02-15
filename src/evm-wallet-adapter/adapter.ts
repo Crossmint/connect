@@ -88,8 +88,8 @@ export class CrossmintEVMWalletAdapter {
             if (isAAWallet(account)) {
                 signedMessage = await this._client.signMessage<string>(
                     new TextEncoder().encode(message),
-                    account.walletId,
-                    account.deviceId
+                    account.projectId,
+                    account.isAA
                 );
             } else {
                 signedMessage = await this._client.signMessage<Uint8Array>(new TextEncoder().encode(message));
@@ -147,7 +147,7 @@ export class CrossmintEVMWalletAdapter {
             let txHash
             const account = this._accounts[0]
             if (isAAWallet(account)) {
-                txHash = await this._client.sendTransaction<TransactionRequest>(tx, account.walletId, account.deviceId);
+                txHash = await this._client.sendTransaction<TransactionRequest>(tx, account.projectId, account.isAA);
             } else {
                 txHash = await this._client.sendTransaction<Uint8Array>(tx);
             }

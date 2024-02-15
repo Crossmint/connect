@@ -33,6 +33,7 @@ export interface WalletProjection {
 
 export interface EVMAAWalletProjection extends WalletProjection {
     isAA: true;
+    projectId: string;
     walletId: string;
     deviceId: string;
 }
@@ -121,7 +122,7 @@ export default class CrossmintEmbed {
         });
     }
 
-    async signMessage<T>(message: Uint8Array, walletId?: string, deviceId?: string) {
+    async signMessage<T>(message: Uint8Array, projectId?: string, isAA?: boolean) {
         const crossmintWindow = new WindowAdapter();
         crossmintWindow.init({ parentWindow: window, url: this._frameUrl });
 
@@ -138,7 +139,7 @@ export default class CrossmintEmbed {
                 switch (request) {
                     case CrossmintEmbedRequestType.SIGN_MESSAGE:
                         const { signedMessage } = data;
-                        if (walletId && deviceId) {
+                        if (isAA) {
                             _signedMessage = signedMessage;
                         } else {
                             _signedMessage = new Uint8Array(signedMessage.split(",").map(Number));
@@ -160,7 +161,7 @@ export default class CrossmintEmbed {
                 await this.postMessage(
                     crossmintWindow.controlledWindow,
                     CrossmintEmbedRequestType.SIGN_MESSAGE,
-                    { message, walletId, deviceId },
+                    { message, projectId, isAA },
                     this._frameUrl
                 );
 
@@ -230,7 +231,7 @@ export default class CrossmintEmbed {
         });
     }
 
-    async sendTransaction<T>(tx: TransactionRequest, walletId?: string, deviceId?: string) {
+    async sendTransaction<T>(tx: TransactionRequest, projectId?: string, isAA?: boolean) {
         const crossmintWindow = new WindowAdapter();
         crossmintWindow.init({ parentWindow: window, url: this._frameUrl });
 
@@ -264,7 +265,7 @@ export default class CrossmintEmbed {
                 await this.postMessage(
                     crossmintWindow.controlledWindow,
                     CrossmintEmbedRequestType.SEND_TRANSACTION,
-                    { tx, walletId, deviceId },
+                    { tx, projectId, isAA },
                     this._frameUrl
                 );
 
