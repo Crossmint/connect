@@ -2,6 +2,7 @@ import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import type { NextPage } from "next";
 import Head from "next/head";
 
+import EVMConnectButton from "../components/EVMConnectButton";
 import { SendTransaction } from "../components/SendTransaction";
 import { SignMessage } from "../components/SignMessage";
 import styles from "../styles/Home.module.css";
@@ -15,9 +16,7 @@ const Home: NextPage = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <WalletMultiButton />
-            <SignMessage />
-            <SendTransaction />
+            <EVMConnectButton />
         </div>
     );
 };

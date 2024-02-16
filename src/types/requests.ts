@@ -9,6 +9,7 @@ export interface SiteMetadata {
 export enum CrossmintEmbedRequestType {
     REQUEST_ACCOUNTS = "crossmint_requestAccounts",
     SIGN_MESSAGE = "crossmint_signMessage",
+    SEND_TRANSACTION = "crossmint_sendTransaction",
     USER_REJECT = "crossmint_userReject",
 }
 
